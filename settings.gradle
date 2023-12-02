@@ -1,0 +1,5 @@
+rootProject.name = 'beer-catalog'
+include 'domain'
+include 'application'
+include 'infrastructure'
+
