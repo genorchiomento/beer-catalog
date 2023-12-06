@@ -1,14 +1,13 @@
 package io.github.genorchiomento.beer.catalog.domain.beer;
 
+import io.github.genorchiomento.beer.catalog.domain.AggregateRoot;
 import io.github.genorchiomento.beer.catalog.domain.beer.enumerable.ColorEnum;
 import io.github.genorchiomento.beer.catalog.domain.beer.enumerable.StyleEnum;
 
 import java.time.Instant;
-import java.util.UUID;
 
-public class Beer {
+public class Beer extends AggregateRoot<BeerID> {
 
-    private final String id;
     private final String name;
     private final StyleEnum style;
     private final String origin;
@@ -24,7 +23,7 @@ public class Beer {
     private final Instant deletedAt;
 
     private Beer(
-            final String id,
+            final BeerID id,
             final String name,
             final StyleEnum style,
             final String origin,
@@ -39,7 +38,7 @@ public class Beer {
             final Instant updatedAt,
             final Instant deletedAt
     ) {
-        this.id = id;
+        super(id);
         this.name = name;
         this.style = style;
         this.origin = origin;
@@ -67,7 +66,7 @@ public class Beer {
             final String anAromaDescription,
             final boolean isActive
     ) {
-        final var id = UUID.randomUUID().toString();
+        final var id = BeerID.unique();
         final var now = Instant.now();
 
         return new Beer(
@@ -88,7 +87,7 @@ public class Beer {
         );
     }
 
-    public String getId() {
+    public BeerID getId() {
         return id;
     }
 
