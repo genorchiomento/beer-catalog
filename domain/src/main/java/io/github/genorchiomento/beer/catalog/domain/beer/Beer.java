@@ -3,6 +3,7 @@ package io.github.genorchiomento.beer.catalog.domain.beer;
 import io.github.genorchiomento.beer.catalog.domain.AggregateRoot;
 import io.github.genorchiomento.beer.catalog.domain.beer.enumerable.ColorEnum;
 import io.github.genorchiomento.beer.catalog.domain.beer.enumerable.StyleEnum;
+import io.github.genorchiomento.beer.catalog.domain.validation.ValidationHandler;
 
 import java.time.Instant;
 
@@ -52,6 +53,11 @@ public class Beer extends AggregateRoot<BeerID> {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
+    }
+
+    @Override
+    public void validate(final ValidationHandler handler) {
+        new BeerValidator(this, handler).validate();
     }
 
     public static Beer newBeer(
