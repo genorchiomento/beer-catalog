@@ -74,6 +74,7 @@ public class Beer extends AggregateRoot<BeerID> {
     ) {
         final var id = BeerID.unique();
         final var now = Instant.now();
+        final var deletedAt = isActive ? null : now;
 
         return new Beer(
                 id,
@@ -89,7 +90,7 @@ public class Beer extends AggregateRoot<BeerID> {
                 isActive,
                 now,
                 now,
-                null
+                deletedAt
         );
     }
 

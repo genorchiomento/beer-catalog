@@ -18,8 +18,25 @@ public class BeerValidator extends Validator {
 
     @Override
     public void validate() {
-        if (beer.getName() == null) {
+        checkNameConstraints();
+    }
+
+    private void checkNameConstraints() {
+        final var name = beer.getName();
+
+        if (name == null) {
             validationHandler().append(new Error("'name' should not be null"));
+            return;
+        }
+
+        if (name.isBlank()) {
+            validationHandler().append(new Error("'name' should not be empty"));
+            return;
+        }
+
+        final var length = name.trim().length();
+        if (length < 3 || length > 255) {
+            validationHandler().append(new Error("'name' must be between 3 and 255 characters"));
         }
     }
 }
