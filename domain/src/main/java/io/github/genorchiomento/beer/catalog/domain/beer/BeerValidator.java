@@ -6,6 +6,8 @@ import io.github.genorchiomento.beer.catalog.domain.validation.Validator;
 
 public class BeerValidator extends Validator {
 
+    public static final int NAME_MIN_LENGTH = 3;
+    public static final int NAME_MAX_LENGTH = 255;
     private final Beer beer;
 
     public BeerValidator(
@@ -35,7 +37,7 @@ public class BeerValidator extends Validator {
         }
 
         final var length = name.trim().length();
-        if (length < 3 || length > 255) {
+        if (length < NAME_MIN_LENGTH || length > NAME_MAX_LENGTH) {
             validationHandler().append(new Error("'name' must be between 3 and 255 characters"));
         }
     }
