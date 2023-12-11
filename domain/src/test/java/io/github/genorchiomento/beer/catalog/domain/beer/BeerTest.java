@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 class BeerTest {
     @Test
-    public void givenAValidParams_whenCallNewBeer_thenInstatiateABeer() {
+    public void givenAValidParams_whenCallNewBeer_thenInstantiateABeer() {
         final var expectedName = "Heineken";
         final var expectedStyle = StyleEnum.LAGER;
         final var expectedOrigin = "Holanda";
@@ -403,5 +403,191 @@ class BeerTest {
         Assertions.assertEquals(createdAt, actualBeer.getCreatedAt());
         Assertions.assertTrue(actualBeer.getUpdatedAt().isAfter(updatedAt));
         Assertions.assertNull(actualBeer.getDeletedAt());
+    }
+
+    @Test
+    public void givenAValidBeer_WhenCallUpdate_thenReturnBeerUpdate() {
+        final var expectedName = "Heineken";
+        final var expectedStyle = StyleEnum.LAGER;
+        final var expectedOrigin = "Holanda";
+        final var expectedIbu = 20.0;
+        final var expectedAbv = 5.0;
+        final var expectedColor = ColorEnum.CLARA;
+        final var expectedIngredients = "Água, Malte e Lúpulo";
+        final var expectedFlavorDescription = "Suave e refrescante";
+        final var expectedAromaDescription = "Cítrico e maltado";
+        final var expectedActive = true;
+
+        final var aBeer = Beer.newBeer(
+                "Heine Quem",
+                expectedStyle,
+                "Holambra",
+                expectedIbu,
+                expectedAbv,
+                expectedColor,
+                expectedIngredients,
+                expectedFlavorDescription,
+                expectedAromaDescription,
+                expectedActive
+        );
+
+        Assertions.assertDoesNotThrow(() -> aBeer.validate(new ThrowsValidationHandler()));
+
+        final var createdAt = aBeer.getCreatedAt();
+        final var updatedAt = aBeer.getUpdatedAt();
+
+        final var actualBeer = aBeer.update(
+                expectedName,
+                expectedStyle,
+                expectedOrigin,
+                expectedIbu,
+                expectedAbv,
+                expectedColor,
+                expectedIngredients,
+                expectedFlavorDescription,
+                expectedAromaDescription,
+                expectedActive
+        );
+
+        Assertions.assertDoesNotThrow(() -> actualBeer.validate(new ThrowsValidationHandler()));
+
+        Assertions.assertEquals(aBeer.getId(), actualBeer.getId());
+        Assertions.assertEquals(expectedName, actualBeer.getName());
+        Assertions.assertEquals(expectedStyle, actualBeer.getStyle());
+        Assertions.assertEquals(expectedOrigin, actualBeer.getOrigin());
+        Assertions.assertEquals(expectedIbu, actualBeer.getIbu());
+        Assertions.assertEquals(expectedAbv, actualBeer.getAbv());
+        Assertions.assertEquals(expectedColor, actualBeer.getColor());
+        Assertions.assertEquals(expectedIngredients, actualBeer.getIngredients());
+        Assertions.assertEquals(expectedFlavorDescription, actualBeer.getFlavorDescription());
+        Assertions.assertEquals(expectedAromaDescription, actualBeer.getAromaDescription());
+        Assertions.assertEquals(expectedActive, actualBeer.isActive());
+        Assertions.assertEquals(createdAt, actualBeer.getCreatedAt());
+        Assertions.assertTrue(actualBeer.getUpdatedAt().isAfter(updatedAt));
+        Assertions.assertNull(actualBeer.getDeletedAt());
+    }
+
+    @Test
+    public void givenAValidBeer_WhenCallUpdateToInactive_thenReturnBeerUpdate() {
+        final var expectedName = "Heineken";
+        final var expectedStyle = StyleEnum.LAGER;
+        final var expectedOrigin = "Holanda";
+        final var expectedIbu = 20.0;
+        final var expectedAbv = 5.0;
+        final var expectedColor = ColorEnum.CLARA;
+        final var expectedIngredients = "Água, Malte e Lúpulo";
+        final var expectedFlavorDescription = "Suave e refrescante";
+        final var expectedAromaDescription = "Cítrico e maltado";
+        final var expectedActive = false;
+
+        final var aBeer = Beer.newBeer(
+                "Heine Quem",
+                expectedStyle,
+                "Holambra",
+                expectedIbu,
+                expectedAbv,
+                expectedColor,
+                expectedIngredients,
+                expectedFlavorDescription,
+                expectedAromaDescription,
+                true
+        );
+
+        Assertions.assertDoesNotThrow(() -> aBeer.validate(new ThrowsValidationHandler()));
+        Assertions.assertTrue(aBeer.isActive());
+        Assertions.assertNull(aBeer.getDeletedAt());
+
+        final var createdAt = aBeer.getCreatedAt();
+        final var updatedAt = aBeer.getUpdatedAt();
+
+        final var actualBeer = aBeer.update(
+                expectedName,
+                expectedStyle,
+                expectedOrigin,
+                expectedIbu,
+                expectedAbv,
+                expectedColor,
+                expectedIngredients,
+                expectedFlavorDescription,
+                expectedAromaDescription,
+                expectedActive
+        );
+
+        Assertions.assertDoesNotThrow(() -> actualBeer.validate(new ThrowsValidationHandler()));
+
+        Assertions.assertEquals(aBeer.getId(), actualBeer.getId());
+        Assertions.assertEquals(expectedName, actualBeer.getName());
+        Assertions.assertEquals(expectedStyle, actualBeer.getStyle());
+        Assertions.assertEquals(expectedOrigin, actualBeer.getOrigin());
+        Assertions.assertEquals(expectedIbu, actualBeer.getIbu());
+        Assertions.assertEquals(expectedAbv, actualBeer.getAbv());
+        Assertions.assertEquals(expectedColor, actualBeer.getColor());
+        Assertions.assertEquals(expectedIngredients, actualBeer.getIngredients());
+        Assertions.assertEquals(expectedFlavorDescription, actualBeer.getFlavorDescription());
+        Assertions.assertEquals(expectedAromaDescription, actualBeer.getAromaDescription());
+        Assertions.assertFalse(aBeer.isActive());
+        Assertions.assertEquals(createdAt, actualBeer.getCreatedAt());
+        Assertions.assertTrue(actualBeer.getUpdatedAt().isAfter(updatedAt));
+        Assertions.assertNotNull(aBeer.getDeletedAt());
+    }
+
+    @Test
+    public void givenAValidBeer_WhenCallUpdateWithInvalidParam_thenReturnBeerUpdate() {
+        final String expectedName = null;
+        final var expectedStyle = StyleEnum.LAGER;
+        final var expectedOrigin = "Holanda";
+        final var expectedIbu = 20.0;
+        final var expectedAbv = 5.0;
+        final var expectedColor = ColorEnum.CLARA;
+        final var expectedIngredients = "Água, Malte e Lúpulo";
+        final var expectedFlavorDescription = "Suave e refrescante";
+        final var expectedAromaDescription = "Cítrico e maltado";
+        final var expectedActive = true;
+
+        final var aBeer = Beer.newBeer(
+                "Heine Quem",
+                expectedStyle,
+                "Holambra",
+                expectedIbu,
+                expectedAbv,
+                expectedColor,
+                expectedIngredients,
+                expectedFlavorDescription,
+                expectedAromaDescription,
+                expectedActive
+        );
+
+        Assertions.assertDoesNotThrow(() -> aBeer.validate(new ThrowsValidationHandler()));
+
+        final var createdAt = aBeer.getCreatedAt();
+        final var updatedAt = aBeer.getUpdatedAt();
+
+        final var actualBeer = aBeer.update(
+                expectedName,
+                expectedStyle,
+                expectedOrigin,
+                expectedIbu,
+                expectedAbv,
+                expectedColor,
+                expectedIngredients,
+                expectedFlavorDescription,
+                expectedAromaDescription,
+                expectedActive
+        );
+
+        Assertions.assertEquals(aBeer.getId(), actualBeer.getId());
+        Assertions.assertEquals(expectedName, actualBeer.getName());
+        Assertions.assertEquals(expectedStyle, actualBeer.getStyle());
+        Assertions.assertEquals(expectedOrigin, actualBeer.getOrigin());
+        Assertions.assertEquals(expectedIbu, actualBeer.getIbu());
+        Assertions.assertEquals(expectedAbv, actualBeer.getAbv());
+        Assertions.assertEquals(expectedColor, actualBeer.getColor());
+        Assertions.assertEquals(expectedIngredients, actualBeer.getIngredients());
+        Assertions.assertEquals(expectedFlavorDescription, actualBeer.getFlavorDescription());
+        Assertions.assertEquals(expectedAromaDescription, actualBeer.getAromaDescription());
+        Assertions.assertTrue(aBeer.isActive());
+        Assertions.assertEquals(createdAt, actualBeer.getCreatedAt());
+        Assertions.assertTrue(actualBeer.getUpdatedAt().isAfter(updatedAt));
+        Assertions.assertNull(aBeer.getDeletedAt());
     }
 }

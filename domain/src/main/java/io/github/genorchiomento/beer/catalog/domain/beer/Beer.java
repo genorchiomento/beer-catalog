@@ -113,6 +113,37 @@ public class Beer extends AggregateRoot<BeerID> {
         return this;
     }
 
+    public Beer update(
+            final String aName,
+            final StyleEnum aStyle,
+            final String anOrigin,
+            final Double anIbu,
+            final Double anAbv,
+            final ColorEnum aColor,
+            final String anIngredients,
+            final String aFlavorDescription,
+            final String anAromaDescription,
+            final boolean isActive
+    ) {
+        updatedAt = Instant.now();
+        name = aName;
+        style = aStyle;
+        origin = anOrigin;
+        ibu = anIbu;
+        abv = anAbv;
+        color = aColor;
+        ingredients = anIngredients;
+        flavorDescription = aFlavorDescription;
+        aromaDescription = anAromaDescription;
+        if (isActive) {
+            activate();
+        } else {
+            deactivate();
+        }
+
+        return this;
+    }
+
     public BeerID getId() {
         return id;
     }
