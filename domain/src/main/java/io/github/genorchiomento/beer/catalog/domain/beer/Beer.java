@@ -9,19 +9,19 @@ import java.time.Instant;
 
 public class Beer extends AggregateRoot<BeerID> {
 
-    private final String name;
-    private final StyleEnum style;
-    private final String origin;
-    private final Double ibu;
-    private final Double abv;
-    private final ColorEnum color;
-    private final String ingredients;
-    private final String flavorDescription;
-    private final String aromaDescription;
-    private final boolean active;
-    private final Instant createdAt;
-    private final Instant updatedAt;
-    private final Instant deletedAt;
+    private String name;
+    private StyleEnum style;
+    private String origin;
+    private Double ibu;
+    private Double abv;
+    private ColorEnum color;
+    private String ingredients;
+    private String flavorDescription;
+    private String aromaDescription;
+    private boolean active;
+    private Instant createdAt;
+    private Instant updatedAt;
+    private Instant deletedAt;
 
     private Beer(
             final BeerID id,
@@ -53,11 +53,6 @@ public class Beer extends AggregateRoot<BeerID> {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
-    }
-
-    @Override
-    public void validate(final ValidationHandler handler) {
-        new BeerValidator(this, handler).validate();
     }
 
     public static Beer newBeer(
@@ -92,6 +87,30 @@ public class Beer extends AggregateRoot<BeerID> {
                 now,
                 deletedAt
         );
+    }
+
+    @Override
+    public void validate(final ValidationHandler handler) {
+        new BeerValidator(this, handler).validate();
+    }
+
+    public Beer activate() {
+        deletedAt = null;
+        active = true;
+        updatedAt = Instant.now();
+
+        return this;
+    }
+
+    public Beer deactivate() {
+        if (getDeletedAt() == null) {
+            deletedAt = Instant.now();
+        }
+
+        active = false;
+        updatedAt = Instant.now();
+
+        return this;
     }
 
     public BeerID getId() {
