@@ -168,8 +168,8 @@ class BeerTest {
     @Test
     public void givenAnInvalidNameLengthMoreThan255_whenCallNewBeerAndValidate_thenReturnAnException() {
         final var expectedName = """
-                A certificação de metodologias que nos auxiliam a lidar com a contínua expansão de nossa atividade 
-                obstaculiza a apreciação da importância das condições inegavelmente apropriadas. A nível organizacional, 
+                A certificação de metodologias que nos auxiliam a lidar com a contínua expansão de nossa atividade
+                obstaculiza a apreciação da importância das condições inegavelmente apropriadas. A nível organizacional,
                 a determinação clara de objetivos garante a contribuição de um grupo.
                 """;
         final var expectedStyle = StyleEnum.LAGER;
