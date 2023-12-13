@@ -1,9 +1,6 @@
 package io.github.genorchiomento.beer.catalog.application;
 
-import io.github.genorchiomento.beer.catalog.domain.beer.Beer;
+public abstract class UseCase<IN, OUT> {
 
-public class UseCase {
-    public Beer execute() {
-        return new Beer();
-    }
+    public abstract OUT execute(IN anIn);
 }
