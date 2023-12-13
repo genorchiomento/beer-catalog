@@ -1,5 +1,4 @@
 package io.github.genorchiomento.beer.catalog.domain;
 
-public class Beer {
-    public String id;
+public abstract class Identifier {
 }
