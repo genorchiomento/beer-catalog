@@ -3,7 +3,6 @@ package io.github.genorchiomento.beer.catalog.application.beer.create;
 import io.github.genorchiomento.beer.catalog.domain.beer.BeerGateway;
 import io.github.genorchiomento.beer.catalog.domain.beer.enumerable.ColorEnum;
 import io.github.genorchiomento.beer.catalog.domain.beer.enumerable.StyleEnum;
-import io.github.genorchiomento.beer.catalog.domain.exceptions.DomainException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -59,7 +58,7 @@ public class CreateBeerUseCaseTest {
         when(beerGateway.create(any()))
                 .thenAnswer(returnsFirstArg());
 
-        final var actualOutput = useCase.execute(aCommand);
+        final var actualOutput = useCase.execute(aCommand).get();
 
         Assertions.assertNotNull(actualOutput);
         Assertions.assertNotNull(actualOutput.id());
@@ -105,10 +104,10 @@ public class CreateBeerUseCaseTest {
                 expectedActive
         );
 
-        final var actualException =
-                Assertions.assertThrows(DomainException.class, () -> useCase.execute(aCommand));
+        final var notification = useCase.execute(aCommand).getLeft();
 
-        Assertions.assertEquals(expectedErrorMessage, actualException.getMessage());
+        Assertions.assertEquals(expectedErrorCount, notification.getErrors().size());
+        Assertions.assertEquals(expectedErrorMessage, notification.firstError().message());
 
         verify(beerGateway, times(0)).create(any());
     }
@@ -143,7 +142,7 @@ public class CreateBeerUseCaseTest {
         when(beerGateway.create(any()))
                 .thenAnswer(returnsFirstArg());
 
-        final var actualOutput = useCase.execute(aCommand);
+        final var actualOutput = useCase.execute(aCommand).get();
 
         Assertions.assertNotNull(actualOutput);
         Assertions.assertNotNull(actualOutput.id());
@@ -174,6 +173,7 @@ public class CreateBeerUseCaseTest {
         final var expectedAromaDescription = "Cítrico e maltado";
         final var expectedActive = true;
         final var expectedErrorMessage = "'name' should not be null";
+        final var expectedErrorCount = 1;
 
         final var aCommand = CreateBeerCommand.with(
                 expectedName,
@@ -191,10 +191,10 @@ public class CreateBeerUseCaseTest {
         when(beerGateway.create(any()))
                 .thenThrow(new IllegalStateException(expectedErrorMessage));
 
-        final var actualException =
-                Assertions.assertThrows(IllegalStateException.class, () -> useCase.execute(aCommand));
+        final var notification = useCase.execute(aCommand).getLeft();
 
-        Assertions.assertEquals(expectedErrorMessage, actualException.getMessage());
+        Assertions.assertEquals(expectedErrorCount, notification.getErrors().size());
+        Assertions.assertEquals(expectedErrorMessage, notification.firstError().message());
 
         verify(beerGateway, times(1)).create(argThat(aBeer ->
                 Objects.equals(expectedName, aBeer.getName())

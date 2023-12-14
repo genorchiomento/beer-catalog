@@ -19,6 +19,14 @@ public class Notification implements ValidationHandler {
         return new Notification(new ArrayList<>());
     }
 
+    public static Notification create(final Throwable t) {
+        return create(new Error(t.getMessage()));
+    }
+
+    public static Notification create(final Error anError) {
+        return new Notification(new ArrayList<>()).append(anError);
+    }
+
     @Override
     public Notification append(final Error error) {
         errors.add(error);

@@ -3,6 +3,8 @@ package io.github.genorchiomento.beer.catalog.application.beer.create;
 import io.github.genorchiomento.beer.catalog.domain.beer.Beer;
 import io.github.genorchiomento.beer.catalog.domain.beer.BeerGateway;
 import io.github.genorchiomento.beer.catalog.domain.validation.handler.Notification;
+import io.vavr.API;
+import io.vavr.control.Either;
 
 import java.util.Objects;
 
@@ -15,7 +17,7 @@ public class DefaultCreateBeerUseCase extends CreateBeerUseCase {
     }
 
     @Override
-    public CreateBeerOutput execute(final CreateBeerCommand aCommand) {
+    public Either<Notification, CreateBeerOutput> execute(final CreateBeerCommand aCommand) {
         final var aName = aCommand.name();
         final var aStyle = aCommand.style();
         final var anOrigin = aCommand.origin();
@@ -44,10 +46,21 @@ public class DefaultCreateBeerUseCase extends CreateBeerUseCase {
 
         aBeer.validate(notification);
 
-        if (notification.hasErrors()) {
-            //TODO implementar
-        }
+        return notification.hasErrors() ? API.Left(notification) : create(aBeer);
+    }
 
-        return CreateBeerOutput.from(beerGateway.create(aBeer));
+    private Either<Notification, CreateBeerOutput> create(final Beer aBeer) {
+        return API.Try(() -> beerGateway.create(aBeer))
+                .toEither()
+                .bimap(Notification::create, CreateBeerOutput::from);
+    }
+
+    //Este metodo é a mesma coisa que o de cima, porem mais verboso e o de cima mais expressivo.
+    private Either<Notification, CreateBeerOutput> otherCreateExample(final Beer aBeer) {
+        try {
+            return API.Right(CreateBeerOutput.from(beerGateway.create(aBeer)));
+        } catch (Throwable t) {
+            return API.Left(Notification.create(t));
+        }
     }
 }
