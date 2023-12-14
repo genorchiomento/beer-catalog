@@ -2,7 +2,7 @@ package io.github.genorchiomento.beer.catalog.application.beer.create;
 
 import io.github.genorchiomento.beer.catalog.domain.beer.Beer;
 import io.github.genorchiomento.beer.catalog.domain.beer.BeerGateway;
-import io.github.genorchiomento.beer.catalog.domain.validation.handler.ThrowsValidationHandler;
+import io.github.genorchiomento.beer.catalog.domain.validation.handler.Notification;
 
 import java.util.Objects;
 
@@ -27,6 +27,8 @@ public class DefaultCreateBeerUseCase extends CreateBeerUseCase {
         final var aAromaDescription = aCommand.aromaDescription();
         final var isActive = aCommand.isActive();
 
+        final var notification = Notification.create();
+
         final var aBeer = Beer.newBeer(
                 aName,
                 aStyle,
@@ -40,7 +42,11 @@ public class DefaultCreateBeerUseCase extends CreateBeerUseCase {
                 isActive
         );
 
-        aBeer.validate(new ThrowsValidationHandler());
+        aBeer.validate(notification);
+
+        if (notification.hasErrors()) {
+            //TODO implementar
+        }
 
         return CreateBeerOutput.from(beerGateway.create(aBeer));
     }
