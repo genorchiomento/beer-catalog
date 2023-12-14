@@ -18,7 +18,7 @@ public class Beer extends AggregateRoot<BeerID> {
     private String ingredients;
     private String flavorDescription;
     private String aromaDescription;
-    private boolean active;
+    private boolean isActive;
     private Instant createdAt;
     private Instant updatedAt;
     private Instant deletedAt;
@@ -34,7 +34,7 @@ public class Beer extends AggregateRoot<BeerID> {
             final String ingredients,
             final String flavorDescription,
             final String aromaDescription,
-            final boolean active,
+            final boolean isActive,
             final Instant createdAt,
             final Instant updatedAt,
             final Instant deletedAt
@@ -49,7 +49,7 @@ public class Beer extends AggregateRoot<BeerID> {
         this.ingredients = ingredients;
         this.flavorDescription = flavorDescription;
         this.aromaDescription = aromaDescription;
-        this.active = active;
+        this.isActive = isActive;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
@@ -96,7 +96,7 @@ public class Beer extends AggregateRoot<BeerID> {
 
     public Beer activate() {
         deletedAt = null;
-        active = true;
+        isActive = true;
         updatedAt = Instant.now();
 
         return this;
@@ -107,7 +107,7 @@ public class Beer extends AggregateRoot<BeerID> {
             deletedAt = Instant.now();
         }
 
-        active = false;
+        isActive = false;
         updatedAt = Instant.now();
 
         return this;
@@ -185,7 +185,7 @@ public class Beer extends AggregateRoot<BeerID> {
     }
 
     public boolean isActive() {
-        return active;
+        return isActive;
     }
 
     public Instant getCreatedAt() {
