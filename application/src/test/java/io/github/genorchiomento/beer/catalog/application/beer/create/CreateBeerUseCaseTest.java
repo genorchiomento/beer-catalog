@@ -49,25 +49,21 @@ public class CreateBeerUseCaseTest {
         when(beerGateway.create(any()))
                 .thenAnswer(returnsFirstArg());
 
-        final var useCase = new CreateBeerUseCase(beerGateway);
+        final var useCase = new DefaultCreateBeerUseCase(beerGateway);
 
         final var actualOutput = useCase.execute(aCommand);
 
         Assertions.assertNotNull(actualOutput);
-        Assertions.assertNotNull(actualOutput.getId());
+        Assertions.assertNotNull(actualOutput.id());
 
-        verify(beerGateway, times(1))
-                .create(argThat(
-                        aBeer -> {
-                            return Objects.equals(expectedName, aBeer.getName())
-                                    && Objects.equals(expectedOrigin, aBeer.getOrigin())
-                                    && Objects.equals(expectedActive, aBeer.isActive())
-                                    && Objects.nonNull(aBeer.getId())
-                                    && Objects.nonNull(aBeer.isActive())
-                                    && Objects.nonNull(aBeer.getCreatedAt())
-                                    && Objects.nonNull(aBeer.getUpdatedAt())
-                                    && Objects.isNull(aBeer.getDeletedAt());
-                        }
+        verify(beerGateway, times(1)).create(argThat(aBeer ->
+                        Objects.equals(expectedName, aBeer.getName())
+                                && Objects.equals(expectedOrigin, aBeer.getOrigin())
+                                && Objects.equals(expectedActive, aBeer.isActive())
+                                && Objects.nonNull(aBeer.getId())
+                                && Objects.nonNull(aBeer.getCreatedAt())
+                                && Objects.nonNull(aBeer.getUpdatedAt())
+                                && Objects.isNull(aBeer.getDeletedAt())
                 ));
     }
 }
