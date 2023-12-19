@@ -37,15 +37,15 @@ public class DeleteBeerUseCaseTest {
     @Test
     public void givenAValidID_whenCallsDeleteBeer_thenShouldBeOK() {
         final var aBeer = Beer.newBeer(
-                "Heine",
+                "Heineken",
                 StyleEnum.LAGER,
-                null,
+                "Holanda",
                 20.0,
                 5.0,
                 ColorEnum.CLARA,
-                null,
-                null,
-                null,
+                "Água, Malte e Lúpulo",
+                "Suave e refrescante",
+                "Cítrico e maltado",
                 true
         );
 
@@ -73,15 +73,15 @@ public class DeleteBeerUseCaseTest {
     @Test
     public void givenAValidID_whenGatewayThrowsError_thenShouldReturnException() {
         final var aBeer = Beer.newBeer(
-                "Heine",
+                "Heineken",
                 StyleEnum.LAGER,
-                null,
+                "Holanda",
                 20.0,
                 5.0,
                 ColorEnum.CLARA,
-                null,
-                null,
-                null,
+                "Água, Malte e Lúpulo",
+                "Suave e refrescante",
+                "Cítrico e maltado",
                 true
         );
 
