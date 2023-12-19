@@ -7,7 +7,7 @@ public record CreateBeerOutput(
         BeerID id
 ) {
 
-    public static CreateBeerOutput from(Beer aBeer) {
+    public static CreateBeerOutput from(final Beer aBeer) {
         return new CreateBeerOutput(aBeer.getId());
     }
 }
