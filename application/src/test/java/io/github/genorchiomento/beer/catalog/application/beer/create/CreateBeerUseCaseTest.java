@@ -4,6 +4,7 @@ import io.github.genorchiomento.beer.catalog.domain.beer.BeerGateway;
 import io.github.genorchiomento.beer.catalog.domain.beer.enumerable.ColorEnum;
 import io.github.genorchiomento.beer.catalog.domain.beer.enumerable.StyleEnum;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,6 +24,11 @@ public class CreateBeerUseCaseTest {
 
     @Mock
     private BeerGateway beerGateway;
+
+    @BeforeEach
+    void cleanUp() {
+        reset(beerGateway);
+    }
 
     // 1. Teste do caminho feliz
     // 2. Teste passando uma propriedade inválida (name)
