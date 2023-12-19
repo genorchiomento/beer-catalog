@@ -66,8 +66,14 @@ public class CreateBeerUseCaseTest {
 
         verify(beerGateway, times(1)).create(argThat(aBeer ->
                         Objects.equals(expectedName, aBeer.getName())
-                                && Objects.equals(expectedOrigin, aBeer.getOrigin())
                                 && Objects.equals(expectedStyle, aBeer.getStyle())
+                                && Objects.equals(expectedOrigin, aBeer.getOrigin())
+                                && Objects.equals(expectedIbu, aBeer.getIbu())
+                                && Objects.equals(expectedAbv, aBeer.getAbv())
+                                && Objects.equals(expectedColor, aBeer.getColor())
+                                && Objects.equals(expectedIngredients, aBeer.getIngredients())
+                                && Objects.equals(expectedFlavorDescription, aBeer.getFlavorDescription())
+                                && Objects.equals(expectedAromaDescription, aBeer.getAromaDescription())
                                 && Objects.equals(expectedActive, aBeer.isActive())
                                 && Objects.nonNull(aBeer.getId())
                                 && Objects.nonNull(aBeer.getCreatedAt())
@@ -150,8 +156,14 @@ public class CreateBeerUseCaseTest {
 
         verify(beerGateway, times(1)).create(argThat(aBeer ->
                 Objects.equals(expectedName, aBeer.getName())
-                        && Objects.equals(expectedOrigin, aBeer.getOrigin())
                         && Objects.equals(expectedStyle, aBeer.getStyle())
+                        && Objects.equals(expectedOrigin, aBeer.getOrigin())
+                        && Objects.equals(expectedIbu, aBeer.getIbu())
+                        && Objects.equals(expectedAbv, aBeer.getAbv())
+                        && Objects.equals(expectedColor, aBeer.getColor())
+                        && Objects.equals(expectedIngredients, aBeer.getIngredients())
+                        && Objects.equals(expectedFlavorDescription, aBeer.getFlavorDescription())
+                        && Objects.equals(expectedAromaDescription, aBeer.getAromaDescription())
                         && Objects.equals(expectedActive, aBeer.isActive())
                         && Objects.nonNull(aBeer.getId())
                         && Objects.nonNull(aBeer.getCreatedAt())
@@ -199,8 +211,14 @@ public class CreateBeerUseCaseTest {
 
         verify(beerGateway, times(1)).create(argThat(aBeer ->
                 Objects.equals(expectedName, aBeer.getName())
-                        && Objects.equals(expectedOrigin, aBeer.getOrigin())
                         && Objects.equals(expectedStyle, aBeer.getStyle())
+                        && Objects.equals(expectedOrigin, aBeer.getOrigin())
+                        && Objects.equals(expectedIbu, aBeer.getIbu())
+                        && Objects.equals(expectedAbv, aBeer.getAbv())
+                        && Objects.equals(expectedColor, aBeer.getColor())
+                        && Objects.equals(expectedIngredients, aBeer.getIngredients())
+                        && Objects.equals(expectedFlavorDescription, aBeer.getFlavorDescription())
+                        && Objects.equals(expectedAromaDescription, aBeer.getAromaDescription())
                         && Objects.equals(expectedActive, aBeer.isActive())
                         && Objects.nonNull(aBeer.getId())
                         && Objects.nonNull(aBeer.getCreatedAt())
