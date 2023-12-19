@@ -92,19 +92,19 @@ public class Beer extends AggregateRoot<BeerID> {
     public static Beer withClone(final Beer aBeer) {
         return new Beer(
                 aBeer.getId(),
-                aBeer.getName(),
-                aBeer.getStyle(),
-                aBeer.getOrigin(),
-                aBeer.getIbu(),
-                aBeer.getAbv(),
-                aBeer.getColor(),
-                aBeer.getIngredients(),
-                aBeer.getFlavorDescription(),
-                aBeer.getAromaDescription(),
-                aBeer.isActive(),
-                aBeer.getCreatedAt(),
-                aBeer.getUpdatedAt(),
-                aBeer.getDeletedAt()
+                aBeer.name,
+                aBeer.style,
+                aBeer.origin,
+                aBeer.ibu,
+                aBeer.abv,
+                aBeer.color,
+                aBeer.ingredients,
+                aBeer.flavorDescription,
+                aBeer.aromaDescription,
+                aBeer.isActive,
+                aBeer.createdAt,
+                aBeer.updatedAt,
+                aBeer.deletedAt
         );
     }
 
