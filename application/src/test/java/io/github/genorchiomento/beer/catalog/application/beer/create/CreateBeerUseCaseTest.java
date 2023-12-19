@@ -23,6 +23,7 @@ public class CreateBeerUseCaseTest {
 
     @Mock
     private BeerGateway beerGateway;
+
     // 1. Teste do caminho feliz
     // 2. Teste passando uma propriedade inválida (name)
     // 3. Teste criando uma cerveja inativa
