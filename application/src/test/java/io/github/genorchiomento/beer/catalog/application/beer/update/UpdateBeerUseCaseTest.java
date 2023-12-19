@@ -75,7 +75,7 @@ public class UpdateBeerUseCaseTest {
                 expectedActive
         );
 
-        when(beerGateway.findById(eq(expectedId))).thenReturn(Optional.of(aBeer));
+        when(beerGateway.findById(eq(expectedId))).thenReturn(Optional.of(Beer.withClone(aBeer)));
         when(beerGateway.update(any())).thenAnswer(returnsFirstArg());
 
         final var actualOutput = useCase.execute(aCommand).get();
@@ -91,7 +91,7 @@ public class UpdateBeerUseCaseTest {
                         && Objects.equals(expectedActive, aUpatedBeer.isActive())
                         && Objects.equals(expectedId, aUpatedBeer.getId())
                         && Objects.equals(aBeer.getCreatedAt(), aUpatedBeer.getCreatedAt())
-                        && Objects.equals(aBeer.getUpdatedAt(), aUpatedBeer.getUpdatedAt())//TODO fix assertion
+                        && aBeer.getUpdatedAt().isBefore(aUpatedBeer.getUpdatedAt())
                         && Objects.isNull(aUpatedBeer.getDeletedAt())
         ));
     }

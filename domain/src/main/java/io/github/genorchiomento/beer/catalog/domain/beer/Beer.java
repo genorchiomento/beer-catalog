@@ -89,6 +89,25 @@ public class Beer extends AggregateRoot<BeerID> {
         );
     }
 
+    public static Beer withClone(final Beer aBeer) {
+        return new Beer(
+                aBeer.getId(),
+                aBeer.getName(),
+                aBeer.getStyle(),
+                aBeer.getOrigin(),
+                aBeer.getIbu(),
+                aBeer.getAbv(),
+                aBeer.getColor(),
+                aBeer.getIngredients(),
+                aBeer.getFlavorDescription(),
+                aBeer.getAromaDescription(),
+                aBeer.isActive(),
+                aBeer.getCreatedAt(),
+                aBeer.getUpdatedAt(),
+                aBeer.getDeletedAt()
+        );
+    }
+
     @Override
     public void validate(final ValidationHandler handler) {
         new BeerValidator(this, handler).validate();
