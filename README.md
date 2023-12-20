@@ -42,7 +42,7 @@ git clone https://github.com/genorchiomento/beer-catalog.git
 - Build the project:
 
 ```
-./mvnw clean package
+./gradle clean build
 ```
 
 - Execute:
