@@ -1,4 +1,4 @@
-package io.github.genorchiomento.beer.catalog.application.beer.findby;
+package io.github.genorchiomento.beer.catalog.application.beer.retrieve.get;
 
 import io.github.genorchiomento.beer.catalog.domain.beer.Beer;
 import io.github.genorchiomento.beer.catalog.domain.beer.BeerGateway;
@@ -88,7 +88,7 @@ public class GetBeerByIdUseCaseTest {
 
     @Test
     public void givenAnInvalidId_whenCallsGetBeer_thenShouldReturnNotFound() {
-        final var expectedErrorMessage = "";
+        final var expectedErrorMessage = "Beer with ID 123 was not found";
         final var expectedId = BeerID.from("123");
 
         when(beerGateway.findById(eq(expectedId))).thenReturn(Optional.empty());
