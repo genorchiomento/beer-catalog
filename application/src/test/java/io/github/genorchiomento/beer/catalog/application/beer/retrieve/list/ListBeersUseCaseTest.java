@@ -45,8 +45,8 @@ public class ListBeersUseCaseTest {
                         "Skol",
                         null,
                         null,
-                        null,
-                        null,
+                        20.0,
+                        5.0,
                         null,
                         null,
                         null,
@@ -57,8 +57,8 @@ public class ListBeersUseCaseTest {
                         "Colorado",
                         null,
                         null,
-                        null,
-                        null,
+                        20.0,
+                        5.0,
                         null,
                         null,
                         null,
@@ -93,7 +93,7 @@ public class ListBeersUseCaseTest {
 
         Assertions.assertEquals(expectedItemsCount, result.items().size());
         Assertions.assertEquals(expectedResult, result);
-        Assertions.assertEquals(expectedPage, result.page());
+        Assertions.assertEquals(expectedPage, result.currentPage());
         Assertions.assertEquals(expectedPerPage, result.perPage());
         Assertions.assertEquals(beers.size(), result.total());
     }
@@ -101,10 +101,65 @@ public class ListBeersUseCaseTest {
     @Test
     public void givenAValidQuery_whenHasNoResults_thenShouldReturnEmptyBeers() {
 
+        final var beers = List.<Beer>of();
+
+        final var expectedPage = 0;
+        final var expectedPerPage = 10;
+        final var expectedTerms = "";
+        final var expectedSort = "createdAt";
+        final var expectedDirection = "asc";
+
+        final var query = new BeerSearchQuery(
+                expectedPage,
+                expectedPerPage,
+                expectedTerms,
+                expectedSort,
+                expectedDirection
+        );
+
+
+        final var expectedPagination = new Pagination<>(expectedPage, expectedPerPage, beers.size(), beers);
+
+        final var expectedItemsCount = 0;
+        final var expectedResult = expectedPagination.map(BeerListOutput::from);
+
+        when(beerGateway.findAll(eq(query))).thenReturn(expectedPagination);
+
+        final var result = useCase.execute(query);
+
+        Assertions.assertEquals(expectedItemsCount, result.items().size());
+        Assertions.assertEquals(expectedResult, result);
+        Assertions.assertEquals(expectedPage, result.currentPage());
+        Assertions.assertEquals(expectedPerPage, result.perPage());
+        Assertions.assertEquals(beers.size(), result.total());
     }
 
     @Test
     public void givenAValidQuery_whenGatewayThrowsException_thenShouldReturnException() {
 
+        final var expectedPage = 0;
+        final var expectedPerPage = 10;
+        final var expectedTerms = "";
+        final var expectedSort = "createdAt";
+        final var expectedDirection = "asc";
+        final var expectedErrorMessage = "Gateway error";
+
+        final var query = new BeerSearchQuery(
+                expectedPage,
+                expectedPerPage,
+                expectedTerms,
+                expectedSort,
+                expectedDirection
+        );
+
+        when(beerGateway.findAll(eq(query))).thenThrow(
+                new IllegalStateException(expectedErrorMessage)
+        );
+
+        final var actualException = Assertions.assertThrows(
+                IllegalStateException.class, () -> useCase.execute(query)
+        );
+
+        Assertions.assertEquals(expectedErrorMessage, actualException.getMessage());
     }
 }
