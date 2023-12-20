@@ -21,12 +21,18 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":application"))
 
+    //This artifact was moved from implementation("mysql:mysql-connector-java:8.0.33")
+    //https://mvnrepository.com/artifact/mysql/mysql-connector-java/8.0.33
+    implementation("com.mysql:mysql-connector-j:8.2.0")
+
     implementation('org.springframework.boot:spring-boot-starter-web') {
         exclude module: 'spring-boot-starter-tomcat'
     }
 
     //Undertow tem perfomado melhor que o tomcat
     implementation('org.springframework.boot:spring-boot-starter-undertow')
+
+    implementation('org.springframework.boot:spring-boot-starter-data-jpa')
 
     testImplementation('org.springframework.boot:spring-boot-starter-test')
 
