@@ -6,6 +6,7 @@ import io.github.genorchiomento.beer.catalog.domain.beer.enumerable.StyleEnum;
 import io.github.genorchiomento.beer.catalog.domain.validation.ValidationHandler;
 
 import java.time.Instant;
+import java.util.Objects;
 
 public class Beer extends AggregateRoot<BeerID> {
 
@@ -50,8 +51,8 @@ public class Beer extends AggregateRoot<BeerID> {
         this.flavorDescription = flavorDescription;
         this.aromaDescription = aromaDescription;
         this.isActive = isActive;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.createdAt = Objects.requireNonNull(createdAt, "'createdAt' should not be null");
+        this.updatedAt = Objects.requireNonNull(updatedAt, "'updatedAt' should not be null");
         this.deletedAt = deletedAt;
     }
 
