@@ -35,8 +35,10 @@ public class BeerMySQLGateway implements BeerGateway {
     }
 
     @Override
-    public Optional<Beer> findById(BeerID anId) {
-        return Optional.empty();
+    public Optional<Beer> findById(final BeerID anId) {
+        return repository.findById(anId.getValue())
+                .map(BeerJpaEntity::toAggregate);
+
     }
 
     @Override
