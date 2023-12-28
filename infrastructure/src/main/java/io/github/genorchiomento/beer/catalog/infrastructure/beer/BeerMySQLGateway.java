@@ -27,7 +27,11 @@ public class BeerMySQLGateway implements BeerGateway {
 
     @Override
     public void deleteById(BeerID anId) {
+        final String idValue = anId.getValue();
 
+        if (repository.existsById(idValue)) {
+            repository.deleteById(idValue);
+        }
     }
 
     @Override
