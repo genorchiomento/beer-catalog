@@ -22,7 +22,7 @@ public class BeerJpaEntity {
     @Column(name = "style")
     private StyleEnum style;
 
-    @Column(name = "origin", nullable = false)
+    @Column(name = "origin")
     private String origin;
 
     @Column(name = "ibu")

@@ -131,7 +131,7 @@ public class BeerMySQLGatewayTest {
         Assertions.assertEquals(expectedAromaDescription, actualInvalidEntity.getAromaDescription());
         Assertions.assertEquals(expectedActive, actualInvalidEntity.isActive());
 
-        final var anUpdatedBeer = aBeer.update(
+        final var anUpdatedBeer = Beer.withClone(aBeer).update(
                 expectedName,
                 expectedStyle,
                 expectedOrigin,

@@ -22,7 +22,7 @@ public class BeerMySQLGateway implements BeerGateway {
 
     @Override
     public Beer create(Beer aBeer) {
-        return repository.save(BeerJpaEntity.from(aBeer)).toAggregate();
+        return save(aBeer);
     }
 
     @Override
@@ -36,12 +36,16 @@ public class BeerMySQLGateway implements BeerGateway {
     }
 
     @Override
-    public Beer update(Beer aBeer) {
-        return null;
+    public Beer update(final Beer aBeer) {
+        return save(aBeer);
     }
 
     @Override
     public Pagination<Beer> findAll(BeerSearchQuery aQuery) {
         return null;
+    }
+
+    private Beer save(Beer aBeer) {
+        return repository.save(BeerJpaEntity.from(aBeer)).toAggregate();
     }
 }
