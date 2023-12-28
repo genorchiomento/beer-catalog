@@ -1,6 +1,7 @@
 package io.github.genorchiomento.beer.catalog.infrastructure.beer;
 
 import io.github.genorchiomento.beer.catalog.domain.beer.Beer;
+import io.github.genorchiomento.beer.catalog.domain.beer.BeerID;
 import io.github.genorchiomento.beer.catalog.domain.beer.enumerable.ColorEnum;
 import io.github.genorchiomento.beer.catalog.domain.beer.enumerable.StyleEnum;
 import io.github.genorchiomento.beer.catalog.infrastructure.MySQLGatewayTest;
@@ -181,6 +182,52 @@ public class BeerMySQLGatewayTest {
         Assertions.assertTrue(aBeer.getUpdatedAt().isBefore(actualBeer.getUpdatedAt()));
         Assertions.assertEquals(aBeer.getDeletedAt(), actualEntity.getDeletedAt());
         Assertions.assertNull(actualEntity.getDeletedAt());
+    }
+
+    @Test
+    public void givenAPrePersistedBeerAndValidBeerID_whenTryToDeleteIt_shouldDeleteBeer() {
+        final var expectedName = "Heineken";
+        final var expectedStyle = StyleEnum.LAGER;
+        final var expectedOrigin = "Holanda";
+        final var expectedIbu = 20.0;
+        final var expectedAbv = 5.0;
+        final var expectedColor = ColorEnum.CLARA;
+        final var expectedIngredients = "Água, Malte e Lúpulo";
+        final var expectedFlavorDescription = "Suave e refrescante";
+        final var expectedAromaDescription = "Cítrico e maltado";
+        final var expectedActive = true;
+
+        final var aBeer = Beer.newBeer(
+                expectedName,
+                expectedStyle,
+                expectedOrigin,
+                expectedIbu,
+                expectedAbv,
+                expectedColor,
+                expectedIngredients,
+                expectedFlavorDescription,
+                expectedAromaDescription,
+                expectedActive
+        );
+
+        Assertions.assertEquals(0, repository.count());
+
+        repository.saveAndFlush(BeerJpaEntity.from(aBeer));
+
+        Assertions.assertEquals(1, repository.count());
+
+        gateway.deleteById(aBeer.getId());
+
+        Assertions.assertEquals(0, repository.count());
+    }
+
+    @Test
+    public void givenAnInvalidBeerID_whenTryToDeleteIt_shouldDeleteBeer() {
+        Assertions.assertEquals(0, repository.count());
+
+        gateway.deleteById(BeerID.from("invalid"));
+
+        Assertions.assertEquals(0, repository.count());
     }
 }
 
