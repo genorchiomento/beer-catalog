@@ -2,6 +2,7 @@ package io.github.genorchiomento.beer.catalog.infrastructure.beer;
 
 import io.github.genorchiomento.beer.catalog.domain.beer.Beer;
 import io.github.genorchiomento.beer.catalog.domain.beer.BeerID;
+import io.github.genorchiomento.beer.catalog.domain.beer.BeerSearchQuery;
 import io.github.genorchiomento.beer.catalog.domain.beer.enumerable.ColorEnum;
 import io.github.genorchiomento.beer.catalog.domain.beer.enumerable.StyleEnum;
 import io.github.genorchiomento.beer.catalog.infrastructure.MySQLGatewayTest;
@@ -10,6 +11,8 @@ import io.github.genorchiomento.beer.catalog.infrastructure.beer.persistence.Bee
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 @MySQLGatewayTest
 public class BeerMySQLGatewayTest {
@@ -290,6 +293,313 @@ public class BeerMySQLGatewayTest {
         final var actualBeer = gateway.findById(BeerID.from("empty"));
 
         Assertions.assertTrue(actualBeer.isEmpty());
+    }
+
+    @Test
+    public void givenPrePersistedBeers_whenCallsFindAll_shouldReturnPaginated() {
+        final var expectedPage = 0;
+        final var expectedPerPage = 1;
+        final var expectedTotal = 3;
+
+        final var heineken = Beer.newBeer(
+                "Heineken",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                true
+        );
+
+        final var brahma = Beer.newBeer(
+                "Brahma",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                true
+        );
+
+        final var skol = Beer.newBeer(
+                "Skol",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                true
+        );
+
+        Assertions.assertEquals(0, repository.count());
+
+        repository.saveAll(
+                List.of(
+                        BeerJpaEntity.from(heineken),
+                        BeerJpaEntity.from(brahma),
+                        BeerJpaEntity.from(skol)
+                )
+        );
+
+        Assertions.assertEquals(3, repository.count());
+
+        final var query = new BeerSearchQuery(0, 1, "", "name", "asc");
+        final var result = gateway.findAll(query);
+
+        Assertions.assertEquals(expectedPage, result.currentPage());
+        Assertions.assertEquals(expectedPerPage, result.perPage());
+        Assertions.assertEquals(expectedTotal, result.total());
+        Assertions.assertEquals(expectedPerPage, result.items().size());
+        Assertions.assertEquals(brahma.getId(), result.items().get(0).getId());
+    }
+
+    @Test
+    public void givenEmptyBeersTable_whenCallsFindAll_shouldReturnEmptyPage() {
+        final var expectedPage = 0;
+        final var expectedPerPage = 1;
+        final var expectedTotal = 0;
+
+        Assertions.assertEquals(0, repository.count());
+
+        final var query = new BeerSearchQuery(0, 1, "", "name", "asc");
+        final var result = gateway.findAll(query);
+
+        Assertions.assertEquals(expectedPage, result.currentPage());
+        Assertions.assertEquals(expectedPerPage, result.perPage());
+        Assertions.assertEquals(expectedTotal, result.total());
+        Assertions.assertEquals(0, result.items().size());
+    }
+
+    @Test
+    public void givenFollowPagination_whenCallsFindAllWithPage1_shouldReturnPaginated() {
+        var expectedPage = 0;
+        final var expectedPerPage = 1;
+        final var expectedTotal = 3;
+
+        final var heineken = Beer.newBeer(
+                "Heineken",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                true
+        );
+
+        final var brahma = Beer.newBeer(
+                "Brahma",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                true
+        );
+
+        final var skol = Beer.newBeer(
+                "Skol",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                true
+        );
+
+        Assertions.assertEquals(0, repository.count());
+
+        repository.saveAll(
+                List.of(
+                        BeerJpaEntity.from(heineken),
+                        BeerJpaEntity.from(brahma),
+                        BeerJpaEntity.from(skol)
+                )
+        );
+
+        Assertions.assertEquals(3, repository.count());
+
+        var query = new BeerSearchQuery(0, 1, "", "name", "asc");
+        var result = gateway.findAll(query);
+
+        Assertions.assertEquals(expectedPage, result.currentPage());
+        Assertions.assertEquals(expectedPerPage, result.perPage());
+        Assertions.assertEquals(expectedTotal, result.total());
+        Assertions.assertEquals(expectedPerPage, result.items().size());
+        Assertions.assertEquals(brahma.getId(), result.items().get(0).getId());
+
+        //Page 1
+        expectedPage = 1;
+        query = new BeerSearchQuery(1, 1, "", "name", "asc");
+        result = gateway.findAll(query);
+
+        Assertions.assertEquals(expectedPage, result.currentPage());
+        Assertions.assertEquals(expectedPerPage, result.perPage());
+        Assertions.assertEquals(expectedTotal, result.total());
+        Assertions.assertEquals(expectedPerPage, result.items().size());
+        Assertions.assertEquals(heineken.getId(), result.items().get(0).getId());
+
+        //Page 1
+        expectedPage = 2;
+        query = new BeerSearchQuery(2, 1, "", "name", "asc");
+        result = gateway.findAll(query);
+
+        Assertions.assertEquals(expectedPage, result.currentPage());
+        Assertions.assertEquals(expectedPerPage, result.perPage());
+        Assertions.assertEquals(expectedTotal, result.total());
+        Assertions.assertEquals(expectedPerPage, result.items().size());
+        Assertions.assertEquals(skol.getId(), result.items().get(0).getId());
+    }
+
+    @Test
+    public void givenPrePersistedBeersAndBraAsTerms_whenCallsFindAllAndTermsMatchsBeerName_shouldReturnPaginated() {
+        final var expectedPage = 0;
+        final var expectedPerPage = 1;
+        final var expectedTotal = 1;
+
+        final var heineken = Beer.newBeer(
+                "Heineken",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                true
+        );
+
+        final var brahma = Beer.newBeer(
+                "Brahma",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                true
+        );
+
+        final var skol = Beer.newBeer(
+                "Skol",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                true
+        );
+
+        Assertions.assertEquals(0, repository.count());
+
+        repository.saveAll(
+                List.of(
+                        BeerJpaEntity.from(heineken),
+                        BeerJpaEntity.from(brahma),
+                        BeerJpaEntity.from(skol)
+                )
+        );
+
+        Assertions.assertEquals(3, repository.count());
+
+        final var query = new BeerSearchQuery(0, 1, "bra", "name", "asc");
+        final var result = gateway.findAll(query);
+
+        Assertions.assertEquals(expectedPage, result.currentPage());
+        Assertions.assertEquals(expectedPerPage, result.perPage());
+        Assertions.assertEquals(expectedTotal, result.total());
+        Assertions.assertEquals(expectedPerPage, result.items().size());
+        Assertions.assertEquals(brahma.getId(), result.items().get(0).getId());
+    }
+
+    @Test
+    public void givenPrePersistedBeersAndHolandaAsTerms_whenCallsFindAllAndTermsMatchsBeerOrigin_shouldReturnPaginated() {
+        final var expectedPage = 0;
+        final var expectedPerPage = 1;
+        final var expectedTotal = 1;
+
+        final var heineken = Beer.newBeer(
+                "Heineken",
+                null,
+                "Holanda",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                true
+        );
+
+        final var brahma = Beer.newBeer(
+                "Brahma",
+                null,
+                "Brasil",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                true
+        );
+
+        final var skol = Beer.newBeer(
+                "Skol",
+                null,
+                "Brasil",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                true
+        );
+
+        Assertions.assertEquals(0, repository.count());
+
+        repository.saveAll(
+                List.of(
+                        BeerJpaEntity.from(heineken),
+                        BeerJpaEntity.from(brahma),
+                        BeerJpaEntity.from(skol)
+                )
+        );
+
+        Assertions.assertEquals(3, repository.count());
+
+        final var query = new BeerSearchQuery(0, 1, "HOLANDA", "name", "asc");
+        final var result = gateway.findAll(query);
+
+        Assertions.assertEquals(expectedPage, result.currentPage());
+        Assertions.assertEquals(expectedPerPage, result.perPage());
+        Assertions.assertEquals(expectedTotal, result.total());
+        Assertions.assertEquals(expectedPerPage, result.items().size());
+        Assertions.assertEquals(heineken.getId(), result.items().get(0).getId());
     }
 }
 
