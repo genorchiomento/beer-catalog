@@ -5,7 +5,7 @@ import io.github.genorchiomento.beer.catalog.domain.beer.BeerID;
 import io.github.genorchiomento.beer.catalog.domain.beer.BeerSearchQuery;
 import io.github.genorchiomento.beer.catalog.domain.beer.enumerable.ColorEnum;
 import io.github.genorchiomento.beer.catalog.domain.beer.enumerable.StyleEnum;
-import io.github.genorchiomento.beer.catalog.infrastructure.MySQLGatewayTest;
+import io.github.genorchiomento.beer.catalog.MySQLGatewayTest;
 import io.github.genorchiomento.beer.catalog.infrastructure.beer.persistence.BeerJpaEntity;
 import io.github.genorchiomento.beer.catalog.infrastructure.beer.persistence.BeerRepository;
 import org.junit.jupiter.api.Assertions;

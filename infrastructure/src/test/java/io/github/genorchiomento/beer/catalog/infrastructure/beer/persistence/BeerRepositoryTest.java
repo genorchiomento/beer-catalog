@@ -3,7 +3,7 @@ package io.github.genorchiomento.beer.catalog.infrastructure.beer.persistence;
 import io.github.genorchiomento.beer.catalog.domain.beer.Beer;
 import io.github.genorchiomento.beer.catalog.domain.beer.enumerable.ColorEnum;
 import io.github.genorchiomento.beer.catalog.domain.beer.enumerable.StyleEnum;
-import io.github.genorchiomento.beer.catalog.infrastructure.MySQLGatewayTest;
+import io.github.genorchiomento.beer.catalog.MySQLGatewayTest;
 import org.hibernate.PropertyValueException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
