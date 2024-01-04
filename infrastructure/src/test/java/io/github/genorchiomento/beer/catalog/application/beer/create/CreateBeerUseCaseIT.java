@@ -168,7 +168,7 @@ public class CreateBeerUseCaseIT {
         Assertions.assertEquals(expectedFlavorDescription, actualBeer.getFlavorDescription());
         Assertions.assertEquals(expectedAromaDescription, actualBeer.getAromaDescription());
         Assertions.assertEquals(expectedActive, actualBeer.isActive());
-        Assertions.assertNotNull(actualBeer.getColor());
+        Assertions.assertNotNull(actualBeer.getCreatedAt());
         Assertions.assertNotNull(actualBeer.getUpdatedAt());
         Assertions.assertNotNull(actualBeer.getDeletedAt());
     }
