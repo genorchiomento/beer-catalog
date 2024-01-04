@@ -31,6 +31,8 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":application"))
 
+    implementation('io.vavr:vavr:0.10.4')
+
     //This artifact was moved from implementation("mysql:mysql-connector-java:8.0.33")
     //https://mvnrepository.com/artifact/mysql/mysql-connector-java/8.0.33
     implementation("com.mysql:mysql-connector-j:8.2.0")
