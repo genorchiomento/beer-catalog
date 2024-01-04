@@ -6,6 +6,7 @@ import io.github.genorchiomento.beer.catalog.domain.beer.enumerable.StyleEnum;
 import io.github.genorchiomento.beer.catalog.domain.validation.ValidationHandler;
 
 import java.time.Instant;
+import java.util.Objects;
 
 public class Beer extends AggregateRoot<BeerID> {
 
@@ -50,8 +51,8 @@ public class Beer extends AggregateRoot<BeerID> {
         this.flavorDescription = flavorDescription;
         this.aromaDescription = aromaDescription;
         this.isActive = isActive;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.createdAt = Objects.requireNonNull(createdAt, "'createdAt' should not be null");
+        this.updatedAt = Objects.requireNonNull(updatedAt, "'updatedAt' should not be null");
         this.deletedAt = deletedAt;
     }
 
@@ -89,8 +90,42 @@ public class Beer extends AggregateRoot<BeerID> {
         );
     }
 
-    public static Beer withClone(final Beer aBeer) {
+    public static Beer with(
+            final BeerID anId,
+            final String name,
+            final StyleEnum style,
+            final String origin,
+            final Double ibu,
+            final Double abv,
+            final ColorEnum color,
+            final String ingredients,
+            final String flavorDescription,
+            final String aromaDescription,
+            final boolean active,
+            final Instant createdAt,
+            final Instant updatedAt,
+            final Instant deletedAt
+    ) {
         return new Beer(
+                anId,
+                name,
+                style,
+                origin,
+                ibu,
+                abv,
+                color,
+                ingredients,
+                flavorDescription,
+                aromaDescription,
+                active,
+                createdAt,
+                updatedAt,
+                deletedAt
+        );
+    }
+
+    public static Beer withClone(final Beer aBeer) {
+        return with(
                 aBeer.getId(),
                 aBeer.name,
                 aBeer.style,
