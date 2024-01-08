@@ -41,6 +41,9 @@ dependencies {
         exclude module: 'spring-boot-starter-tomcat'
     }
 
+    implementation('org.springdoc:springdoc-openapi-webmvc-core:1.6.8')
+    implementation('org.springdoc:springdoc-openapi-ui:1.6.8')
+
     //Undertow tem perfomado melhor que o tomcat
     implementation('org.springframework.boot:spring-boot-starter-undertow')
 
