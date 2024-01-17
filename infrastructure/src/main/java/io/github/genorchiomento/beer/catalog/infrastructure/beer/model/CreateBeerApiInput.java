@@ -14,6 +14,6 @@ public record CreateBeerApiInput(
         @JsonProperty("ingredients") String ingredients,
         @JsonProperty("flavor_description") String flavorDescription,
         @JsonProperty("aroma_description") String aromaDescription,
-        @JsonProperty("is_active") boolean active
+        @JsonProperty("is_active") Boolean active
 ) {
 }
