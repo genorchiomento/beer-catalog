@@ -4,6 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.genorchiomento.beer.catalog.ControllerTest;
 import io.github.genorchiomento.beer.catalog.application.beer.create.CreateBeerOutput;
 import io.github.genorchiomento.beer.catalog.application.beer.create.CreateBeerUseCase;
+import io.github.genorchiomento.beer.catalog.application.beer.retrieve.get.BeerOutput;
+import io.github.genorchiomento.beer.catalog.application.beer.retrieve.get.GetBeerByIdUseCase;
+import io.github.genorchiomento.beer.catalog.domain.beer.Beer;
+import io.github.genorchiomento.beer.catalog.domain.beer.BeerID;
 import io.github.genorchiomento.beer.catalog.domain.beer.enumerable.ColorEnum;
 import io.github.genorchiomento.beer.catalog.domain.beer.enumerable.StyleEnum;
 import io.github.genorchiomento.beer.catalog.domain.exceptions.DomainException;
@@ -13,7 +17,6 @@ import io.github.genorchiomento.beer.catalog.infrastructure.beer.model.CreateBee
 import io.vavr.API;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -24,6 +27,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import java.util.Objects;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ControllerTest(controllers = BeerAPI.class)
@@ -36,11 +40,14 @@ public class BeerAPITest {
     private ObjectMapper mapper;
 
     @MockBean
-    private CreateBeerUseCase useCase;
+    private CreateBeerUseCase createBeerUseCase;
+
+    @MockBean
+    private GetBeerByIdUseCase getBeerByIdUseCase;
 
     @Test
     public void givenAValidCommand_WhenCreateBeer_ThenShouldReturnBeerId() throws Exception {
-
+        //given
         final var expectedName = "Heineken";
         final var expectedStyle = StyleEnum.LAGER;
         final var expectedOrigin = "Holanda";
@@ -65,21 +72,24 @@ public class BeerAPITest {
                 expectedActive
         );
 
-        Mockito.when(useCase.execute(Mockito.any()))
+        when(createBeerUseCase.execute(any()))
                 .thenReturn(API.Right(CreateBeerOutput.from("123")));
 
+        //when
         final var request = MockMvcRequestBuilders.post("/beers")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(anInput));
 
-        mvc.perform(request)
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(status().isCreated())
+        final var response = mvc.perform(request)
+                .andDo(MockMvcResultHandlers.print());
+
+        //then
+        response.andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/beers/123"))
                 .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.id", equalTo("123")));
 
-        Mockito.verify(useCase, Mockito.times(1)).execute(Mockito.argThat(cmd ->
+        verify(createBeerUseCase, times(1)).execute(argThat(cmd ->
                 Objects.equals(expectedName, cmd.name())
                         && Objects.equals(expectedStyle, cmd.style())
                         && Objects.equals(expectedOrigin, cmd.origin())
@@ -95,7 +105,7 @@ public class BeerAPITest {
 
     @Test
     public void givenAnInvalidName_whenCreateABeer_thenShouldReturnNotification() throws Exception {
-
+        //given
         final String expectedName = null;
         final var expectedStyle = StyleEnum.LAGER;
         final var expectedOrigin = "Holanda";
@@ -121,22 +131,25 @@ public class BeerAPITest {
                 expectedActive
         );
 
-        Mockito.when(useCase.execute(Mockito.any()))
+        when(createBeerUseCase.execute(any()))
                 .thenReturn(API.Left(Notification.create(new Error(expectedMessage))));
 
+        //when
         final var request = MockMvcRequestBuilders.post("/beers")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(anInput));
 
-        mvc.perform(request)
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(status().isUnprocessableEntity())
+        final var response = mvc.perform(request)
+                .andDo(MockMvcResultHandlers.print());
+
+        //then
+        response.andExpect(status().isUnprocessableEntity())
                 .andExpect(header().string("Location", Matchers.nullValue()))
                 .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.errors", Matchers.hasSize(1)))
                 .andExpect(jsonPath("$.errors[0].message", Matchers.equalTo(expectedMessage)));
 
-        Mockito.verify(useCase, Mockito.times(1)).execute(Mockito.argThat(cmd ->
+        verify(createBeerUseCase, times(1)).execute(argThat(cmd ->
                 Objects.equals(expectedName, cmd.name())
                         && Objects.equals(expectedStyle, cmd.style())
                         && Objects.equals(expectedOrigin, cmd.origin())
@@ -153,6 +166,7 @@ public class BeerAPITest {
     @Test
     public void givenAnInvalidCommand_whenCreateABeer_thenShouldReturnDomainException() throws Exception {
 
+        //given
         final String expectedName = null;
         final var expectedStyle = StyleEnum.LAGER;
         final var expectedOrigin = "Holanda";
@@ -178,26 +192,29 @@ public class BeerAPITest {
                 expectedActive
         );
 
-        Mockito.when(useCase.execute(Mockito.any()))
+        when(createBeerUseCase.execute(any()))
                 .thenReturn(API.Left(Notification.create(new Error(expectedMessage))));
 
-        Mockito.when(useCase.execute(Mockito.any()))
+        when(createBeerUseCase.execute(any()))
                 .thenThrow(DomainException.with(new Error(expectedMessage)));
 
+        //when
         final var request = MockMvcRequestBuilders.post("/beers")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(anInput));
 
-        mvc.perform(request)
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(status().isUnprocessableEntity())
+        final var response = mvc.perform(request)
+                .andDo(MockMvcResultHandlers.print());
+
+        //then
+        response.andExpect(status().isUnprocessableEntity())
                 .andExpect(header().string("Location", Matchers.nullValue()))
                 .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.message", Matchers.equalTo(expectedMessage)))
                 .andExpect(jsonPath("$.errors", Matchers.hasSize(1)))
                 .andExpect(jsonPath("$.errors[0].message", Matchers.equalTo(expectedMessage)));
 
-        Mockito.verify(useCase, Mockito.times(1)).execute(Mockito.argThat(cmd ->
+        verify(createBeerUseCase, times(1)).execute(argThat(cmd ->
                 Objects.equals(expectedName, cmd.name())
                         && Objects.equals(expectedStyle, cmd.style())
                         && Objects.equals(expectedOrigin, cmd.origin())
@@ -209,5 +226,83 @@ public class BeerAPITest {
                         && Objects.equals(expectedAromaDescription, cmd.aromaDescription())
                         && Objects.equals(expectedActive, cmd.isActive())
         ));
+    }
+
+
+    @Test
+    public void givenAValidId_whenCallsGetBeer_thenShouldReturnBeer() throws Exception {
+        //given
+        final var expectedName = "Heineken";
+        final var expectedStyle = StyleEnum.LAGER;
+        final var expectedOrigin = "Holanda";
+        final var expectedIbu = 20.0;
+        final var expectedAbv = 5.0;
+        final var expectedColor = ColorEnum.CLARA;
+        final var expectedIngredients = "Água, Malte e Lúpulo";
+        final var expectedFlavorDescription = "Suave e refrescante";
+        final var expectedAromaDescription = "Cítrico e maltado";
+        final var expectedActive = true;
+
+        final var aBeer = Beer.newBeer(
+                expectedName,
+                expectedStyle,
+                expectedOrigin,
+                expectedIbu,
+                expectedAbv,
+                expectedColor,
+                expectedIngredients,
+                expectedFlavorDescription,
+                expectedAromaDescription,
+                expectedActive
+        );
+
+        final var expectedId = aBeer.getId().getValue();
+
+        when(getBeerByIdUseCase.execute(any()))
+                .thenReturn(BeerOutput.from(aBeer));
+
+        //when
+        final var request =
+                MockMvcRequestBuilders.get("/beers/{id}", expectedId);
+
+        final var response = mvc.perform(request)
+                .andDo(MockMvcResultHandlers.print());
+
+        //then
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", equalTo(expectedId)))
+                .andExpect(jsonPath("$.name", equalTo(expectedName)))
+                .andExpect(jsonPath("$.style", equalTo(expectedStyle)))
+                .andExpect(jsonPath("$.origin", equalTo(expectedOrigin)))
+                .andExpect(jsonPath("$.ibu", equalTo(expectedIbu)))
+                .andExpect(jsonPath("$.abv", equalTo(expectedAbv)))
+                .andExpect(jsonPath("$.color", equalTo(expectedColor)))
+                .andExpect(jsonPath("$.ingredients", equalTo(expectedIngredients)))
+                .andExpect(jsonPath("$.flavor_description", equalTo(expectedFlavorDescription)))
+                .andExpect(jsonPath("$.aroma_description", equalTo(expectedAromaDescription)))
+                .andExpect(jsonPath("$.is_active", equalTo(expectedActive)))
+                .andExpect(jsonPath("$.created_at", equalTo(aBeer.getCreatedAt().toString())))
+                .andExpect(jsonPath("$.updated_at", equalTo(aBeer.getUpdatedAt().toString())))
+                .andExpect(jsonPath("$.deleted_at", equalTo(aBeer.getDeletedAt().toString())));
+
+        verify(getBeerByIdUseCase, times(1)).execute(eq(expectedId));
+    }
+
+    @Test
+    public void givenAnInvalidId_whenCallsGetBeer_thenShouldReturnNotFound() throws Exception {
+        //given
+        final var expectedErrorMessage = "Beer with ID 123 was not found";
+        final var expectedId = BeerID.from("123").getValue();
+
+        //when
+        final var request =
+                MockMvcRequestBuilders.get("/beers/{id}", expectedId);
+
+        final var response = mvc.perform(request)
+                .andDo(MockMvcResultHandlers.print());
+
+        //then
+        response.andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message", equalTo(expectedErrorMessage)));
     }
 }
