@@ -6,6 +6,8 @@ import io.github.genorchiomento.beer.catalog.application.beer.create.CreateBeerO
 import io.github.genorchiomento.beer.catalog.application.beer.create.CreateBeerUseCase;
 import io.github.genorchiomento.beer.catalog.application.beer.retrieve.get.BeerOutput;
 import io.github.genorchiomento.beer.catalog.application.beer.retrieve.get.GetBeerByIdUseCase;
+import io.github.genorchiomento.beer.catalog.application.beer.update.UpdateBeerOutput;
+import io.github.genorchiomento.beer.catalog.application.beer.update.UpdateBeerUseCase;
 import io.github.genorchiomento.beer.catalog.domain.beer.Beer;
 import io.github.genorchiomento.beer.catalog.domain.beer.BeerID;
 import io.github.genorchiomento.beer.catalog.domain.beer.enumerable.ColorEnum;
@@ -15,6 +17,7 @@ import io.github.genorchiomento.beer.catalog.domain.exceptions.NotFoundException
 import io.github.genorchiomento.beer.catalog.domain.validation.Error;
 import io.github.genorchiomento.beer.catalog.domain.validation.handler.Notification;
 import io.github.genorchiomento.beer.catalog.infrastructure.beer.model.CreateBeerApiInput;
+import io.github.genorchiomento.beer.catalog.infrastructure.beer.model.UpdateBeerApiInput;
 import io.vavr.API;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -45,6 +48,9 @@ public class BeerAPITest {
 
     @MockBean
     private GetBeerByIdUseCase getBeerByIdUseCase;
+
+    @MockBean
+    private UpdateBeerUseCase updateBeerUseCase;
 
     @Test
     public void givenAValidCommand_WhenCreateBeer_ThenShouldReturnBeerId() throws Exception {
@@ -313,5 +319,64 @@ public class BeerAPITest {
         //then
         response.andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message", equalTo(expectedErrorMessage)));
+    }
+
+    @Test
+    public void givenAValidCommand_WhenUpdateBeer_ThenShouldReturnBeerId() throws Exception {
+        //given
+        final var expectedId = "123";
+        final var expectedName = "Heineken";
+        final var expectedStyle = StyleEnum.LAGER;
+        final var expectedOrigin = "Holanda";
+        final var expectedIbu = 20.0;
+        final var expectedAbv = 5.0;
+        final var expectedColor = ColorEnum.CLARA;
+        final var expectedIngredients = "Água, Malte e Lúpulo";
+        final var expectedFlavorDescription = "Suave e refrescante";
+        final var expectedAromaDescription = "Cítrico e maltado";
+        final var expectedActive = true;
+
+        final var aCommand = new UpdateBeerApiInput(
+                expectedName,
+                expectedStyle,
+                expectedOrigin,
+                expectedIbu,
+                expectedAbv,
+                expectedColor,
+                expectedIngredients,
+                expectedFlavorDescription,
+                expectedAromaDescription,
+                expectedActive
+        );
+
+        when(updateBeerUseCase.execute(any()))
+                .thenReturn(API.Right(UpdateBeerOutput.from(expectedId)));
+
+        //when
+        final var request =
+                MockMvcRequestBuilders.put("/beers/{id}", expectedId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(aCommand));
+
+        final var response = mvc.perform(request)
+                .andDo(MockMvcResultHandlers.print());
+
+        //then
+        response.andExpect(status().isNoContent())
+                .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE));
+
+        verify(updateBeerUseCase, times(1)).execute(argThat(cmd ->
+                Objects.equals(expectedName, cmd.name())
+                        && Objects.equals(expectedStyle, cmd.style())
+                        && Objects.equals(expectedOrigin, cmd.origin())
+                        && Objects.equals(expectedIbu, cmd.ibu())
+                        && Objects.equals(expectedAbv, cmd.abv())
+                        && Objects.equals(expectedColor, cmd.color())
+                        && Objects.equals(expectedIngredients, cmd.ingredients())
+                        && Objects.equals(expectedFlavorDescription, cmd.flavorDescription())
+                        && Objects.equals(expectedAromaDescription, cmd.aromaDescription())
+                        && Objects.equals(expectedActive, cmd.isActive())
+        ));
     }
 }
