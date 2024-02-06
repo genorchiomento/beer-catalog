@@ -5,7 +5,7 @@ import io.github.genorchiomento.beer.catalog.domain.beer.BeerGateway;
 import io.github.genorchiomento.beer.catalog.domain.beer.BeerID;
 import io.github.genorchiomento.beer.catalog.domain.beer.enumerable.ColorEnum;
 import io.github.genorchiomento.beer.catalog.domain.beer.enumerable.StyleEnum;
-import io.github.genorchiomento.beer.catalog.domain.exceptions.DomainException;
+import io.github.genorchiomento.beer.catalog.domain.exceptions.NotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -94,7 +94,7 @@ public class GetBeerByIdUseCaseTest {
         when(beerGateway.findById(eq(expectedId))).thenReturn(Optional.empty());
 
         final var actualException = Assertions.assertThrows(
-                DomainException.class,
+                NotFoundException.class,
                 () -> useCase.execute(expectedId.getValue())
         );
 

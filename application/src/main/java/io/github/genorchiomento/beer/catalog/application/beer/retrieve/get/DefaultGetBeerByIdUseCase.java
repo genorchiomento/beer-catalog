@@ -1,9 +1,9 @@
 package io.github.genorchiomento.beer.catalog.application.beer.retrieve.get;
 
+import io.github.genorchiomento.beer.catalog.domain.beer.Beer;
 import io.github.genorchiomento.beer.catalog.domain.beer.BeerGateway;
 import io.github.genorchiomento.beer.catalog.domain.beer.BeerID;
-import io.github.genorchiomento.beer.catalog.domain.exceptions.DomainException;
-import io.github.genorchiomento.beer.catalog.domain.validation.Error;
+import io.github.genorchiomento.beer.catalog.domain.exceptions.NotFoundException;
 
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -25,9 +25,7 @@ public class DefaultGetBeerByIdUseCase extends GetBeerByIdUseCase {
                 .orElseThrow(notFound(aBeerID));
     }
 
-    private Supplier<DomainException> notFound(final BeerID anId) {
-        return () -> DomainException.with(
-                new Error("Beer with ID %s was not found".formatted(anId.getValue()))
-        );
+    private Supplier<NotFoundException> notFound(final BeerID anId) {
+        return () -> NotFoundException.with(Beer.class, anId);
     }
 }

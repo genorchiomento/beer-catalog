@@ -26,6 +26,7 @@ public class BeerID extends Identifier {
         return new BeerID(id.toString().toLowerCase());
     }
 
+    @Override
     public String getValue() {
         return value;
     }

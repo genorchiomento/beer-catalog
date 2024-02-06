@@ -11,6 +11,7 @@ import io.github.genorchiomento.beer.catalog.domain.beer.BeerID;
 import io.github.genorchiomento.beer.catalog.domain.beer.enumerable.ColorEnum;
 import io.github.genorchiomento.beer.catalog.domain.beer.enumerable.StyleEnum;
 import io.github.genorchiomento.beer.catalog.domain.exceptions.DomainException;
+import io.github.genorchiomento.beer.catalog.domain.exceptions.NotFoundException;
 import io.github.genorchiomento.beer.catalog.domain.validation.Error;
 import io.github.genorchiomento.beer.catalog.domain.validation.handler.Notification;
 import io.github.genorchiomento.beer.catalog.infrastructure.beer.model.CreateBeerApiInput;
@@ -263,27 +264,30 @@ public class BeerAPITest {
 
         //when
         final var request =
-                MockMvcRequestBuilders.get("/beers/{id}", expectedId);
+                MockMvcRequestBuilders.get("/beers/{id}", expectedId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON);
 
         final var response = mvc.perform(request)
                 .andDo(MockMvcResultHandlers.print());
 
         //then
         response.andExpect(status().isOk())
+                .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.id", equalTo(expectedId)))
                 .andExpect(jsonPath("$.name", equalTo(expectedName)))
-                .andExpect(jsonPath("$.style", equalTo(expectedStyle)))
+                .andExpect(jsonPath("$.style", equalTo(expectedStyle.name())))
                 .andExpect(jsonPath("$.origin", equalTo(expectedOrigin)))
                 .andExpect(jsonPath("$.ibu", equalTo(expectedIbu)))
                 .andExpect(jsonPath("$.abv", equalTo(expectedAbv)))
-                .andExpect(jsonPath("$.color", equalTo(expectedColor)))
+                .andExpect(jsonPath("$.color", equalTo(expectedColor.name())))
                 .andExpect(jsonPath("$.ingredients", equalTo(expectedIngredients)))
                 .andExpect(jsonPath("$.flavor_description", equalTo(expectedFlavorDescription)))
                 .andExpect(jsonPath("$.aroma_description", equalTo(expectedAromaDescription)))
                 .andExpect(jsonPath("$.is_active", equalTo(expectedActive)))
                 .andExpect(jsonPath("$.created_at", equalTo(aBeer.getCreatedAt().toString())))
                 .andExpect(jsonPath("$.updated_at", equalTo(aBeer.getUpdatedAt().toString())))
-                .andExpect(jsonPath("$.deleted_at", equalTo(aBeer.getDeletedAt().toString())));
+                .andExpect(jsonPath("$.deleted_at", equalTo(aBeer.getDeletedAt())));
 
         verify(getBeerByIdUseCase, times(1)).execute(eq(expectedId));
     }
@@ -292,11 +296,16 @@ public class BeerAPITest {
     public void givenAnInvalidId_whenCallsGetBeer_thenShouldReturnNotFound() throws Exception {
         //given
         final var expectedErrorMessage = "Beer with ID 123 was not found";
-        final var expectedId = BeerID.from("123").getValue();
+        final var expectedId = BeerID.from("123");
+
+        when(getBeerByIdUseCase.execute(any()))
+                .thenThrow(NotFoundException.with(Beer.class, expectedId));
 
         //when
         final var request =
-                MockMvcRequestBuilders.get("/beers/{id}", expectedId);
+                MockMvcRequestBuilders.get("/beers/{id}", expectedId.getValue())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON);
 
         final var response = mvc.perform(request)
                 .andDo(MockMvcResultHandlers.print());

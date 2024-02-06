@@ -1,6 +1,7 @@
 package io.github.genorchiomento.beer.catalog.infrastructure.api;
 
 import io.github.genorchiomento.beer.catalog.domain.pagination.Pagination;
+import io.github.genorchiomento.beer.catalog.infrastructure.beer.model.BeerApiOutput;
 import io.github.genorchiomento.beer.catalog.infrastructure.beer.model.CreateBeerApiInput;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -43,4 +44,19 @@ public interface BeerAPI {
             @RequestParam(name = "dir", required = false, defaultValue = "asc") final String direction
     );
 
+    @GetMapping(
+            value = "{id}",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @Operation(summary = "Get a beer by it's identifier")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Beer retrieved Successfully"),
+            @ApiResponse(responseCode = "404", description = "Beer was not found"),
+            @ApiResponse(responseCode = "500", description = "An internal server error was thrown"),
+
+    })
+    BeerApiOutput getById(
+            @PathVariable(name = "id") String id
+    );
 }

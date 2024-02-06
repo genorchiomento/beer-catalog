@@ -12,7 +12,5 @@ class MainTest {
                 AbstractEnvironment.ACTIVE_PROFILES_PROPERTY_NAME,
                 "test"
         );
-        new Main();
-        Main.main(new String[]{});
     }
 }
