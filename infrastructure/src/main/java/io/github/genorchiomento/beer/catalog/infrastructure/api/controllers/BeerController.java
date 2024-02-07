@@ -4,6 +4,9 @@ import io.github.genorchiomento.beer.catalog.application.beer.create.CreateBeerC
 import io.github.genorchiomento.beer.catalog.application.beer.create.CreateBeerOutput;
 import io.github.genorchiomento.beer.catalog.application.beer.create.CreateBeerUseCase;
 import io.github.genorchiomento.beer.catalog.application.beer.retrieve.get.GetBeerByIdUseCase;
+import io.github.genorchiomento.beer.catalog.application.beer.update.UpdateBeerCommand;
+import io.github.genorchiomento.beer.catalog.application.beer.update.UpdateBeerOutput;
+import io.github.genorchiomento.beer.catalog.application.beer.update.UpdateBeerUseCase;
 import io.github.genorchiomento.beer.catalog.domain.pagination.Pagination;
 import io.github.genorchiomento.beer.catalog.domain.validation.handler.Notification;
 import io.github.genorchiomento.beer.catalog.infrastructure.api.BeerAPI;
@@ -22,10 +25,15 @@ public class BeerController implements BeerAPI {
 
     private final CreateBeerUseCase createBeerUseCase;
     private final GetBeerByIdUseCase getBeerByIdUseCase;
+    private final UpdateBeerUseCase updateBeerUseCase;
 
-    public BeerController(final CreateBeerUseCase createBeerUseCase, GetBeerByIdUseCase getBeerByIdUseCase) {
+    public BeerController(
+            final CreateBeerUseCase createBeerUseCase,
+            final GetBeerByIdUseCase getBeerByIdUseCase,
+            final UpdateBeerUseCase updateBeerUseCase) {
         this.createBeerUseCase = Objects.requireNonNull(createBeerUseCase);
         this.getBeerByIdUseCase = Objects.requireNonNull(getBeerByIdUseCase);
+        this.updateBeerUseCase = Objects.requireNonNull(updateBeerUseCase);
     }
 
     @Override
@@ -61,5 +69,33 @@ public class BeerController implements BeerAPI {
     @Override
     public BeerApiOutput getById(final String id) {
         return BeerApiPresenter.present(getBeerByIdUseCase.execute(id));
+    }
+
+    @Override
+    public ResponseEntity<?> updateById(
+            final String id,
+            final CreateBeerApiInput input
+    ) {
+        final var aCommand = UpdateBeerCommand.with(
+                id,
+                input.name(),
+                input.style(),
+                input.origin(),
+                input.ibu(),
+                input.abv(),
+                input.color(),
+                input.ingredients(),
+                input.flavorDescription(),
+                input.aromaDescription(),
+                input.active() != null ? input.active() : true
+        );
+
+        final Function<Notification, ResponseEntity<?>> onError = notification ->
+                ResponseEntity.unprocessableEntity().body(notification);
+
+        final Function<UpdateBeerOutput, ResponseEntity<?>> onSuccess = ResponseEntity::ok;
+
+        return updateBeerUseCase.execute(aCommand)
+                .fold(onError, onSuccess);
     }
 }

@@ -6,6 +6,7 @@ import io.github.genorchiomento.beer.catalog.domain.beer.BeerID;
 import io.github.genorchiomento.beer.catalog.domain.beer.enumerable.ColorEnum;
 import io.github.genorchiomento.beer.catalog.domain.beer.enumerable.StyleEnum;
 import io.github.genorchiomento.beer.catalog.domain.exceptions.DomainException;
+import io.github.genorchiomento.beer.catalog.domain.exceptions.NotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -295,7 +296,7 @@ public class UpdateBeerUseCaseTest {
     @Test
     public void givenACommandWithInvalidID_whenUpdateABeer_thenShouldReturnNotFoundException() {
 
-        final String expectedName = null;
+        final String expectedName = "Heineken";
         final var expectedStyle = StyleEnum.LAGER;
         final var expectedOrigin = "Holanda";
         final var expectedIbu = 20.0;
@@ -304,7 +305,7 @@ public class UpdateBeerUseCaseTest {
         final var expectedIngredients = "Água, Malte e Lúpulo";
         final var expectedFlavorDescription = "Suave e refrescante";
         final var expectedAromaDescription = "Cítrico e maltado";
-        final var expectedActive = true;
+        final var expectedActive = false;
         final var expectedId = "123";
 
         final var expectedErrorMessage = "Beer with ID 123 was not found";
@@ -327,10 +328,9 @@ public class UpdateBeerUseCaseTest {
         when(beerGateway.findById(eq(BeerID.from(expectedId)))).thenReturn(Optional.empty());
 
         final var actualException =
-                Assertions.assertThrows(DomainException.class, () -> useCase.execute(aCommand));
+                Assertions.assertThrows(NotFoundException.class, () -> useCase.execute(aCommand));
 
-        Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
-        Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().get(0).message());
+        Assertions.assertEquals(expectedErrorMessage, actualException.getMessage());
 
         verify(beerGateway, times(1)).findById(eq(BeerID.from(expectedId)));
         verify(beerGateway, times(0)).update(any());

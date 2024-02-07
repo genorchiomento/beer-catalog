@@ -59,4 +59,22 @@ public interface BeerAPI {
     BeerApiOutput getById(
             @PathVariable(name = "id") String id
     );
+
+    @PutMapping(
+            value = "{id}",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @Operation(summary = "Update a beer by it's identifier")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Beer updated Successfully"),
+            @ApiResponse(responseCode = "404", description = "Beer was not found"),
+            @ApiResponse(responseCode = "500", description = "An internal server error was thrown"),
+
+    })
+    ResponseEntity<?> updateById(
+            @PathVariable(name = "id") String id,
+            @RequestBody CreateBeerApiInput input
+    );
+
 }
