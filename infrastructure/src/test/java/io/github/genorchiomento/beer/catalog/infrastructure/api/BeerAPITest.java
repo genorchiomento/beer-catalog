@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.genorchiomento.beer.catalog.ControllerTest;
 import io.github.genorchiomento.beer.catalog.application.beer.create.CreateBeerOutput;
 import io.github.genorchiomento.beer.catalog.application.beer.create.CreateBeerUseCase;
+import io.github.genorchiomento.beer.catalog.application.beer.delete.DeleteBeerUseCase;
 import io.github.genorchiomento.beer.catalog.application.beer.retrieve.get.BeerOutput;
 import io.github.genorchiomento.beer.catalog.application.beer.retrieve.get.GetBeerByIdUseCase;
 import io.github.genorchiomento.beer.catalog.application.beer.update.UpdateBeerOutput;
@@ -51,6 +52,9 @@ public class BeerAPITest {
 
     @MockBean
     private UpdateBeerUseCase updateBeerUseCase;
+
+    @MockBean
+    private DeleteBeerUseCase deleteBeerUseCase;
 
     @Test
     public void givenAValidCommand_WhenCreateBeer_ThenShouldReturnBeerId() throws Exception {
@@ -505,5 +509,27 @@ public class BeerAPITest {
                         && Objects.equals(expectedAromaDescription, cmd.aromaDescription())
                         && Objects.equals(expectedActive, cmd.isActive())
         ));
+    }
+
+    @Test
+    public void givenAValidID_whenCallsDeleteBeer_thenShouldBeOK() throws Exception {
+        //given
+        final var expectedId = "123";
+
+        doNothing().when(deleteBeerUseCase).execute(any());
+
+        //when
+        final var request =
+                MockMvcRequestBuilders.delete("/beers/{id}", expectedId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON);
+
+        final var response = mvc.perform(request)
+                .andDo(MockMvcResultHandlers.print());
+
+        //then
+        response.andExpect(status().isNoContent());
+
+        verify(deleteBeerUseCase, times(1)).execute(eq(expectedId));
     }
 }

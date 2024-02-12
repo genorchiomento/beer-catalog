@@ -3,6 +3,7 @@ package io.github.genorchiomento.beer.catalog.infrastructure.api.controllers;
 import io.github.genorchiomento.beer.catalog.application.beer.create.CreateBeerCommand;
 import io.github.genorchiomento.beer.catalog.application.beer.create.CreateBeerOutput;
 import io.github.genorchiomento.beer.catalog.application.beer.create.CreateBeerUseCase;
+import io.github.genorchiomento.beer.catalog.application.beer.delete.DeleteBeerUseCase;
 import io.github.genorchiomento.beer.catalog.application.beer.retrieve.get.GetBeerByIdUseCase;
 import io.github.genorchiomento.beer.catalog.application.beer.update.UpdateBeerCommand;
 import io.github.genorchiomento.beer.catalog.application.beer.update.UpdateBeerOutput;
@@ -26,14 +27,18 @@ public class BeerController implements BeerAPI {
     private final CreateBeerUseCase createBeerUseCase;
     private final GetBeerByIdUseCase getBeerByIdUseCase;
     private final UpdateBeerUseCase updateBeerUseCase;
+    private final DeleteBeerUseCase deleteBeerUseCase;
 
     public BeerController(
             final CreateBeerUseCase createBeerUseCase,
             final GetBeerByIdUseCase getBeerByIdUseCase,
-            final UpdateBeerUseCase updateBeerUseCase) {
+            final UpdateBeerUseCase updateBeerUseCase,
+            final DeleteBeerUseCase deleteBeerUseCase
+    ) {
         this.createBeerUseCase = Objects.requireNonNull(createBeerUseCase);
         this.getBeerByIdUseCase = Objects.requireNonNull(getBeerByIdUseCase);
         this.updateBeerUseCase = Objects.requireNonNull(updateBeerUseCase);
+        this.deleteBeerUseCase = Objects.requireNonNull(deleteBeerUseCase);
     }
 
     @Override
@@ -97,5 +102,10 @@ public class BeerController implements BeerAPI {
 
         return updateBeerUseCase.execute(aCommand)
                 .fold(onError, onSuccess);
+    }
+
+    @Override
+    public void deleteById(final String id) {
+        deleteBeerUseCase.execute(id);
     }
 }
