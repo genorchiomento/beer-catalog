@@ -68,8 +68,8 @@ public class BeerResponseTest {
                 .hasJsonPathValue("$.aroma_description", expectedAromaDescription)
                 .hasJsonPathValue("$.is_active", expectedActive)
                 .hasJsonPathValue("$.created_at", expectedCreatedAt.toString())
-                .hasJsonPathValue("$.deleted_at", expectedDeletedAt.toString())
-                .hasJsonPathValue("$.updated_at", expectedUpdatedAt.toString());
+                .hasJsonPathValue("$.updated_at", expectedUpdatedAt.toString())
+                .hasJsonPathValue("$.deleted_at", expectedDeletedAt.toString());
     }
 
     @Test
@@ -139,7 +139,7 @@ public class BeerResponseTest {
                 .hasFieldOrPropertyWithValue("aromaDescription", expectedAromaDescription)
                 .hasFieldOrPropertyWithValue("active", expectedActive)
                 .hasFieldOrPropertyWithValue("createdAt", expectedCreatedAt)
-                .hasFieldOrPropertyWithValue("deletedAt", expectedDeletedAt)
-                .hasFieldOrPropertyWithValue("updatedAt", expectedUpdatedAt);
+                .hasFieldOrPropertyWithValue("updatedAt", expectedUpdatedAt)
+                .hasFieldOrPropertyWithValue("deletedAt", expectedDeletedAt);
     }
 }
