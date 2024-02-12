@@ -4,6 +4,7 @@ import io.github.genorchiomento.beer.catalog.domain.pagination.Pagination;
 import io.github.genorchiomento.beer.catalog.infrastructure.beer.model.BeerListResponse;
 import io.github.genorchiomento.beer.catalog.infrastructure.beer.model.BeerResponse;
 import io.github.genorchiomento.beer.catalog.infrastructure.beer.model.CreateBeerRequest;
+import io.github.genorchiomento.beer.catalog.infrastructure.beer.model.UpdateBeerRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -76,7 +77,7 @@ public interface BeerAPI {
     })
     ResponseEntity<?> updateById(
             @PathVariable(name = "id") String id,
-            @RequestBody CreateBeerRequest input
+            @RequestBody UpdateBeerRequest input
     );
 
     @DeleteMapping(

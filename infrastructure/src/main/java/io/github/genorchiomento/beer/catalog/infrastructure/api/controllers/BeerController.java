@@ -16,6 +16,7 @@ import io.github.genorchiomento.beer.catalog.infrastructure.api.BeerAPI;
 import io.github.genorchiomento.beer.catalog.infrastructure.beer.model.BeerListResponse;
 import io.github.genorchiomento.beer.catalog.infrastructure.beer.model.BeerResponse;
 import io.github.genorchiomento.beer.catalog.infrastructure.beer.model.CreateBeerRequest;
+import io.github.genorchiomento.beer.catalog.infrastructure.beer.model.UpdateBeerRequest;
 import io.github.genorchiomento.beer.catalog.infrastructure.beer.presenter.BeerApiPresenter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -92,7 +93,7 @@ public class BeerController implements BeerAPI {
     @Override
     public ResponseEntity<?> updateById(
             final String id,
-            final CreateBeerRequest input
+            final UpdateBeerRequest input
     ) {
         final var aCommand = UpdateBeerCommand.with(
                 id,
