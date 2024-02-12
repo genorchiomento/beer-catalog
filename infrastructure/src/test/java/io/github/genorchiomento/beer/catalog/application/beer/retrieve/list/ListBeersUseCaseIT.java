@@ -89,7 +89,7 @@ public class ListBeersUseCaseIT {
 
         final var expectedPage = 0;
         final var expectedPerPage = 10;
-        final var expectedTerms = "Netflix";
+        final var expectedTerms = "Quilmes";
         final var expectedSort = "name";
         final var expectedDirection = "asc";
         final var expectedItemsCount = 0;
@@ -188,7 +188,7 @@ public class ListBeersUseCaseIT {
             "0,2,2,4,3 Americas;Bragantina",
             "1,2,2,4,Colorado;Skol"
     })
-    public void givenAValidPage_whenCallsListBeers_shouldReturnCategoriesPaginated(
+    public void givenAValidPage_whenCallsListBeers_shouldReturnBeersPaginated(
             final int expectedPage,
             final int expectedPerPage,
             final int expectedItemsCount,

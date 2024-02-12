@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.github.genorchiomento.beer.catalog.domain.beer.enumerable.ColorEnum;
 import io.github.genorchiomento.beer.catalog.domain.beer.enumerable.StyleEnum;
 
-public record CreateBeerApiInput(
+public record CreateBeerRequest(
         @JsonProperty("name") String name,
         @JsonProperty("style") StyleEnum style,
         @JsonProperty("origin") String origin,

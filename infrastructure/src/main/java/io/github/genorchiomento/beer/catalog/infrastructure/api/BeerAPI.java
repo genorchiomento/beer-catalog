@@ -1,8 +1,9 @@
 package io.github.genorchiomento.beer.catalog.infrastructure.api;
 
 import io.github.genorchiomento.beer.catalog.domain.pagination.Pagination;
-import io.github.genorchiomento.beer.catalog.infrastructure.beer.model.BeerApiOutput;
-import io.github.genorchiomento.beer.catalog.infrastructure.beer.model.CreateBeerApiInput;
+import io.github.genorchiomento.beer.catalog.infrastructure.beer.model.BeerListResponse;
+import io.github.genorchiomento.beer.catalog.infrastructure.beer.model.BeerResponse;
+import io.github.genorchiomento.beer.catalog.infrastructure.beer.model.CreateBeerRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -27,7 +28,7 @@ public interface BeerAPI {
             @ApiResponse(responseCode = "500", description = "An internal server error was thrown"),
 
     })
-    ResponseEntity<?> createBeer(@RequestBody CreateBeerApiInput input);
+    ResponseEntity<?> createBeer(@RequestBody CreateBeerRequest input);
 
     @GetMapping
     @Operation(summary = "List all beers paginated")
@@ -37,7 +38,7 @@ public interface BeerAPI {
             @ApiResponse(responseCode = "500", description = "An internal server error was thrown"),
 
     })
-    Pagination<?> listBeers(
+    Pagination<BeerListResponse> listBeers(
             @RequestParam(name = "search", required = false, defaultValue = "") final String search,
             @RequestParam(name = "page", required = false, defaultValue = "0") final int page,
             @RequestParam(name = "perPage", required = false, defaultValue = "10") final int perPage,
@@ -57,7 +58,7 @@ public interface BeerAPI {
             @ApiResponse(responseCode = "500", description = "An internal server error was thrown"),
 
     })
-    BeerApiOutput getById(
+    BeerResponse getById(
             @PathVariable(name = "id") String id
     );
 
@@ -75,7 +76,7 @@ public interface BeerAPI {
     })
     ResponseEntity<?> updateById(
             @PathVariable(name = "id") String id,
-            @RequestBody CreateBeerApiInput input
+            @RequestBody CreateBeerRequest input
     );
 
     @DeleteMapping(
