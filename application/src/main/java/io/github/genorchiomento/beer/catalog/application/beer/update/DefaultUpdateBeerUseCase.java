@@ -4,7 +4,7 @@ import io.github.genorchiomento.beer.catalog.domain.beer.Beer;
 import io.github.genorchiomento.beer.catalog.domain.beer.BeerGateway;
 import io.github.genorchiomento.beer.catalog.domain.beer.BeerID;
 import io.github.genorchiomento.beer.catalog.domain.exceptions.DomainException;
-import io.github.genorchiomento.beer.catalog.domain.validation.Error;
+import io.github.genorchiomento.beer.catalog.domain.exceptions.NotFoundException;
 import io.github.genorchiomento.beer.catalog.domain.validation.handler.Notification;
 import io.vavr.API;
 import io.vavr.control.Either;
@@ -64,8 +64,6 @@ public class DefaultUpdateBeerUseCase extends UpdateBeerUseCase {
     }
 
     private Supplier<DomainException> notFound(final BeerID anId) {
-        return () -> DomainException.with(
-                new Error("Beer with ID %s was not found".formatted(anId.getValue()))
-        );
+        return () -> NotFoundException.with(Beer.class, anId);
     }
 }

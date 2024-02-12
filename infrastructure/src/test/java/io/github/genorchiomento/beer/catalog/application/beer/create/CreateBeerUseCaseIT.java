@@ -12,7 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @IntegrationTest
 public class CreateBeerUseCaseIT {
@@ -62,7 +63,7 @@ public class CreateBeerUseCaseIT {
 
         Assertions.assertEquals(1, repository.count());
 
-        final var actualBeer = repository.findById(actualOutput.id().getValue()).get();
+        final var actualBeer = repository.findById(actualOutput.id()).get();
 
         Assertions.assertEquals(expectedName, actualBeer.getName());
         Assertions.assertEquals(expectedStyle, actualBeer.getStyle());
@@ -156,7 +157,7 @@ public class CreateBeerUseCaseIT {
 
         Assertions.assertEquals(1, repository.count());
 
-        final var actualBeer = repository.findById(actualOutput.id().getValue()).get();
+        final var actualBeer = repository.findById(actualOutput.id()).get();
 
         Assertions.assertEquals(expectedName, actualBeer.getName());
         Assertions.assertEquals(expectedStyle, actualBeer.getStyle());

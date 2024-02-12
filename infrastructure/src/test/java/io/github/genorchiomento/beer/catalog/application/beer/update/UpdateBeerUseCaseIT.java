@@ -7,6 +7,7 @@ import io.github.genorchiomento.beer.catalog.domain.beer.BeerID;
 import io.github.genorchiomento.beer.catalog.domain.beer.enumerable.ColorEnum;
 import io.github.genorchiomento.beer.catalog.domain.beer.enumerable.StyleEnum;
 import io.github.genorchiomento.beer.catalog.domain.exceptions.DomainException;
+import io.github.genorchiomento.beer.catalog.domain.exceptions.NotFoundException;
 import io.github.genorchiomento.beer.catalog.infrastructure.beer.persistence.BeerJpaEntity;
 import io.github.genorchiomento.beer.catalog.infrastructure.beer.persistence.BeerRepository;
 import org.junit.jupiter.api.Assertions;
@@ -333,10 +334,9 @@ public class UpdateBeerUseCaseIT {
         );
 
         final var actualException =
-                Assertions.assertThrows(DomainException.class, () -> useCase.execute(aCommand));
+                Assertions.assertThrows(NotFoundException.class, () -> useCase.execute(aCommand));
 
-        Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
-        Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().get(0).message());
+        Assertions.assertEquals(expectedErrorMessage, actualException.getMessage());
     }
 
     private void save(final Beer... aBeer) {
