@@ -1,9 +1,8 @@
-package io.github.genorchiomento.beer.catalog.infrastructure.beer.models;
+package io.github.genorchiomento.beer.catalog.infrastructure.beer.model;
 
 import io.github.genorchiomento.beer.catalog.JacksonTest;
 import io.github.genorchiomento.beer.catalog.domain.beer.enumerable.ColorEnum;
 import io.github.genorchiomento.beer.catalog.domain.beer.enumerable.StyleEnum;
-import io.github.genorchiomento.beer.catalog.infrastructure.beer.model.UpdateBeerRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
