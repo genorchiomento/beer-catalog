@@ -49,7 +49,6 @@ public interface BeerAPI {
 
     @GetMapping(
             value = "{id}",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @Operation(summary = "Get a beer by it's identifier")
@@ -81,9 +80,7 @@ public interface BeerAPI {
     );
 
     @DeleteMapping(
-            value = "{id}",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
+            value = "{id}"
     )
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Delete a beer by it's identifier")
