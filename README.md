@@ -22,7 +22,7 @@ and even discover new beers based on their tastes and preferences.
 ![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)&nbsp;
 ![Kotlin](https://img.shields.io/badge/Java-white.svg?style=for-the-badge&logo=openjdk&logoColor=black)&nbsp;
 ![MySQL](https://img.shields.io/badge/mysql-%2300f.svg?style=for-the-badge&logo=mysql&logoColor=white)&nbsp;
-![Docker]()&nbsp;
+![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)&nbsp;
 
 ## Features
 
@@ -62,14 +62,4 @@ docker compose up -d
 
 ```shell
 ./gradlew bootRun
-```
-
-- Test
-
-```
-POST/http
-
-{
-
-}
 ```
