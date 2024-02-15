@@ -283,6 +283,70 @@ public class BeerE2ETest {
 
     }
 
+    @Test
+    public void asACatalogAdminIShouldBeAbleToGetABeerByItsIdentifier() throws Exception {
+        Assertions.assertTrue(MYSQL_CONTAINER.isRunning());
+
+        Assertions.assertEquals(0, beerRepository.count());
+
+        final var expectedName = "Heineken";
+        final var expectedStyle = StyleEnum.LAGER;
+        final var expectedOrigin = "Holanda";
+        final var expectedIbu = 20.0;
+        final var expectedAbv = 5.0;
+        final var expectedColor = ColorEnum.CLARA;
+        final var expectedIngredients = "Água, Malte e Lúpulo";
+        final var expectedFlavorDescription = "Suave e refrescante";
+        final var expectedAromaDescription = "Cítrico e maltado";
+        final var expectedActive = true;
+
+        final var actualId = givenABeer(
+                expectedName,
+                expectedStyle,
+                expectedOrigin,
+                expectedIbu,
+                expectedAbv,
+                expectedColor,
+                expectedIngredients,
+                expectedFlavorDescription,
+                expectedAromaDescription,
+                expectedActive
+        );
+
+        final var actualBeer = beerRepository.findById(actualId.getValue()).get();
+
+        Assertions.assertEquals(expectedName, actualBeer.getName());
+        Assertions.assertEquals(expectedStyle, actualBeer.getStyle());
+        Assertions.assertEquals(expectedOrigin, actualBeer.getOrigin());
+        Assertions.assertEquals(expectedIbu, actualBeer.getIbu());
+        Assertions.assertEquals(expectedAbv, actualBeer.getAbv());
+        Assertions.assertEquals(expectedColor, actualBeer.getColor());
+        Assertions.assertEquals(expectedIngredients, actualBeer.getIngredients());
+        Assertions.assertEquals(expectedFlavorDescription, actualBeer.getFlavorDescription());
+        Assertions.assertEquals(expectedAromaDescription, actualBeer.getAromaDescription());
+        Assertions.assertEquals(expectedActive, actualBeer.isActive());
+        Assertions.assertNotNull(actualBeer.getCreatedAt());
+        Assertions.assertNotNull(actualBeer.getUpdatedAt());
+        Assertions.assertNull(actualBeer.getDeletedAt());
+    }
+
+    @Test
+    public void asACatalogAdminIShouldBeAbleToSeeATreatedErrorByGettingANotFoundBeer() throws Exception {
+        final var expectedErrorMessage = "Beer with ID 123 was not found";
+
+        Assertions.assertTrue(MYSQL_CONTAINER.isRunning());
+
+        Assertions.assertEquals(0, beerRepository.count());
+
+        final var aRequest = MockMvcRequestBuilders.get("/beers/123")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        final var json = mockMvc.perform(aRequest)
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message", equalTo(expectedErrorMessage)));
+    }
+
     private ResultActions listBeers(final int page, final int perPage) throws Exception {
         return listBeers(page, perPage, "", "", "");
     }
