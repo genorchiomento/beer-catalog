@@ -15,11 +15,16 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @E2ETest
 @Testcontainers
@@ -89,6 +94,287 @@ public class BeerE2ETest {
         Assertions.assertNull(actualBeer.deletedAt());
     }
 
+    @Test
+    public void asACatalogAdminIShouldBeAbleToNavigateToAllBeers() throws Exception {
+        Assertions.assertTrue(MYSQL_CONTAINER.isRunning());
+
+        Assertions.assertEquals(0, beerRepository.count());
+
+        givenABeer(
+                "Heineken",
+                null,
+                null,
+                20.0,
+                5.0,
+                null,
+                "Água, Malte e Lúpulo",
+                "Suave e refrescante",
+                "Cítrico e maltado",
+                true
+        );
+
+        givenABeer(
+                "Skol",
+                null,
+                null,
+                20.0,
+                5.0,
+                null,
+                "Água, Malte e Lúpulo",
+                "Suave e refrescante",
+                "Cítrico e maltado",
+                true
+        );
+
+        givenABeer(
+                "Colorado",
+                null,
+                null,
+                20.0,
+                5.0,
+                null,
+                "Água, Malte e Lúpulo",
+                "Suave e refrescante",
+                "Cítrico e maltado",
+                true
+        );
+
+        listBeers(0, 1)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.current_page", equalTo(0)))
+                .andExpect(jsonPath("$.per_page", equalTo(1)))
+                .andExpect(jsonPath("$.total", equalTo(3)))
+                .andExpect(jsonPath("$.items", hasSize(1)))
+                .andExpect(jsonPath("$.items[0].name", equalTo("Colorado")));
+
+        listBeers(1, 1)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.current_page", equalTo(1)))
+                .andExpect(jsonPath("$.per_page", equalTo(1)))
+                .andExpect(jsonPath("$.total", equalTo(3)))
+                .andExpect(jsonPath("$.items", hasSize(1)))
+                .andExpect(jsonPath("$.items[0].name", equalTo("Heineken")));
+
+        listBeers(2, 1)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.current_page", equalTo(2)))
+                .andExpect(jsonPath("$.per_page", equalTo(1)))
+                .andExpect(jsonPath("$.total", equalTo(3)))
+                .andExpect(jsonPath("$.items", hasSize(1)))
+                .andExpect(jsonPath("$.items[0].name", equalTo("Skol")));
+
+        listBeers(3, 1)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.current_page", equalTo(3)))
+                .andExpect(jsonPath("$.per_page", equalTo(1)))
+                .andExpect(jsonPath("$.total", equalTo(3)))
+                .andExpect(jsonPath("$.items", hasSize(0)));
+    }
+
+    @Test
+    public void asACatalogAdminIShouldBeAbleToSearchBetweenAllBeers() throws Exception {
+        Assertions.assertTrue(MYSQL_CONTAINER.isRunning());
+
+        Assertions.assertEquals(0, beerRepository.count());
+
+        givenABeer(
+                "Heineken",
+                null,
+                null,
+                20.0,
+                5.0,
+                null,
+                "Água, Malte e Lúpulo",
+                "Suave e refrescante",
+                "Cítrico e maltado",
+                true
+        );
+
+        givenABeer(
+                "Skol",
+                null,
+                null,
+                20.0,
+                5.0,
+                null,
+                "Água, Malte e Lúpulo",
+                "Suave e refrescante",
+                "Cítrico e maltado",
+                true
+        );
+
+        givenABeer(
+                "Colorado",
+                null,
+                null,
+                20.0,
+                5.0,
+                null,
+                "Água, Malte e Lúpulo",
+                "Suave e refrescante",
+                "Cítrico e maltado",
+                true
+        );
+
+        listBeers(0, 1, "sk")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.current_page", equalTo(0)))
+                .andExpect(jsonPath("$.per_page", equalTo(1)))
+                .andExpect(jsonPath("$.total", equalTo(1)))
+                .andExpect(jsonPath("$.items", hasSize(1)))
+                .andExpect(jsonPath("$.items[0].name", equalTo("Skol")));
+
+    }
+
+    @Test
+    public void asACatalogAdminIShouldBeAbleToSortAllBeersByOrigin() throws Exception {
+        Assertions.assertTrue(MYSQL_CONTAINER.isRunning());
+
+        Assertions.assertEquals(0, beerRepository.count());
+
+        givenABeer(
+                "Heineken",
+                null,
+                "B",
+                20.0,
+                5.0,
+                null,
+                "Água, Malte e Lúpulo",
+                "Suave e refrescante",
+                "Cítrico e maltado",
+                true
+        );
+
+        givenABeer(
+                "Skol",
+                null,
+                "C",
+                20.0,
+                5.0,
+                null,
+                "Água, Malte e Lúpulo",
+                "Suave e refrescante",
+                "Cítrico e maltado",
+                true
+        );
+
+        givenABeer(
+                "Colorado",
+                null,
+                "A",
+                20.0,
+                5.0,
+                null,
+                "Água, Malte e Lúpulo",
+                "Suave e refrescante",
+                "Cítrico e maltado",
+                true
+        );
+
+        listBeers(0, 3, "", "origin", "desc")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.current_page", equalTo(0)))
+                .andExpect(jsonPath("$.per_page", equalTo(3)))
+                .andExpect(jsonPath("$.total", equalTo(3)))
+                .andExpect(jsonPath("$.items", hasSize(3)))
+                .andExpect(jsonPath("$.items[0].name", equalTo("Skol")))
+                .andExpect(jsonPath("$.items[1].name", equalTo("Heineken")))
+                .andExpect(jsonPath("$.items[2].name", equalTo("Colorado")));
+
+    }
+
+    @Test
+    public void asACatalogAdminIShouldBeAbleToGetABeerByItsIdentifier() throws Exception {
+        Assertions.assertTrue(MYSQL_CONTAINER.isRunning());
+
+        Assertions.assertEquals(0, beerRepository.count());
+
+        final var expectedName = "Heineken";
+        final var expectedStyle = StyleEnum.LAGER;
+        final var expectedOrigin = "Holanda";
+        final var expectedIbu = 20.0;
+        final var expectedAbv = 5.0;
+        final var expectedColor = ColorEnum.CLARA;
+        final var expectedIngredients = "Água, Malte e Lúpulo";
+        final var expectedFlavorDescription = "Suave e refrescante";
+        final var expectedAromaDescription = "Cítrico e maltado";
+        final var expectedActive = true;
+
+        final var actualId = givenABeer(
+                expectedName,
+                expectedStyle,
+                expectedOrigin,
+                expectedIbu,
+                expectedAbv,
+                expectedColor,
+                expectedIngredients,
+                expectedFlavorDescription,
+                expectedAromaDescription,
+                expectedActive
+        );
+
+        final var actualBeer = beerRepository.findById(actualId.getValue()).get();
+
+        Assertions.assertEquals(expectedName, actualBeer.getName());
+        Assertions.assertEquals(expectedStyle, actualBeer.getStyle());
+        Assertions.assertEquals(expectedOrigin, actualBeer.getOrigin());
+        Assertions.assertEquals(expectedIbu, actualBeer.getIbu());
+        Assertions.assertEquals(expectedAbv, actualBeer.getAbv());
+        Assertions.assertEquals(expectedColor, actualBeer.getColor());
+        Assertions.assertEquals(expectedIngredients, actualBeer.getIngredients());
+        Assertions.assertEquals(expectedFlavorDescription, actualBeer.getFlavorDescription());
+        Assertions.assertEquals(expectedAromaDescription, actualBeer.getAromaDescription());
+        Assertions.assertEquals(expectedActive, actualBeer.isActive());
+        Assertions.assertNotNull(actualBeer.getCreatedAt());
+        Assertions.assertNotNull(actualBeer.getUpdatedAt());
+        Assertions.assertNull(actualBeer.getDeletedAt());
+    }
+
+    @Test
+    public void asACatalogAdminIShouldBeAbleToSeeATreatedErrorByGettingANotFoundBeer() throws Exception {
+        final var expectedErrorMessage = "Beer with ID 123 was not found";
+
+        Assertions.assertTrue(MYSQL_CONTAINER.isRunning());
+
+        Assertions.assertEquals(0, beerRepository.count());
+
+        final var aRequest = MockMvcRequestBuilders.get("/beers/123")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        final var json = mockMvc.perform(aRequest)
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message", equalTo(expectedErrorMessage)));
+    }
+
+    private ResultActions listBeers(final int page, final int perPage) throws Exception {
+        return listBeers(page, perPage, "", "", "");
+    }
+
+    private ResultActions listBeers(final int page, final int perPage, final String search) throws Exception {
+        return listBeers(page, perPage, search, "", "");
+    }
+
+
+    private ResultActions listBeers(
+            final int page,
+            final int perPage,
+            final String search,
+            final String sort,
+            final String dir
+    ) throws Exception {
+        final var aRequest = MockMvcRequestBuilders.get("/beers")
+                .queryParam("page", String.valueOf(page))
+                .queryParam("perPage", String.valueOf(perPage))
+                .queryParam("search", search)
+                .queryParam("sort", sort)
+                .queryParam("dir", dir)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        return mockMvc.perform(aRequest);
+    }
+
     private BeerID givenABeer(
             final String aName,
             final StyleEnum aStyle,
@@ -119,7 +405,7 @@ public class BeerE2ETest {
                 .content(Json.writeValueAsString(createBeerRequest));
 
         final var actualId = mockMvc.perform(aRequest)
-                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(status().isCreated())
                 .andReturn()
                 .getResponse().getHeader("Location")
                 .replace("/beers/", "");
@@ -134,7 +420,7 @@ public class BeerE2ETest {
                 .contentType(MediaType.APPLICATION_JSON);
 
         final var json = mockMvc.perform(aRequest)
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(status().isOk())
                 .andReturn()
                 .getResponse().getContentAsString();
 
