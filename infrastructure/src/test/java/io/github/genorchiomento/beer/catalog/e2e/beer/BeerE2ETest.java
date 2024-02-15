@@ -553,6 +553,44 @@ public class BeerE2ETest {
         Assertions.assertNull(actualBeer.getDeletedAt());
     }
 
+    @Test
+    public void asACatalogAdminIShouldBeAbleToDeleteABeerByItsIdentifier() throws Exception {
+        Assertions.assertTrue(MYSQL_CONTAINER.isRunning());
+
+        Assertions.assertEquals(0, beerRepository.count());
+
+        final var expectedName = "Heineken";
+        final var expectedStyle = StyleEnum.LAGER;
+        final var expectedOrigin = "Holanda";
+        final var expectedIbu = 20.0;
+        final var expectedAbv = 5.0;
+        final var expectedColor = ColorEnum.CLARA;
+        final var expectedIngredients = "Água, Malte e Lúpulo";
+        final var expectedFlavorDescription = "Suave e refrescante";
+        final var expectedAromaDescription = "Cítrico e maltado";
+        final var expectedActive = true;
+
+        final var actualId = givenABeer(
+                expectedName,
+                expectedStyle,
+                expectedOrigin,
+                expectedIbu,
+                expectedAbv,
+                expectedColor,
+                expectedIngredients,
+                expectedFlavorDescription,
+                expectedAromaDescription,
+                expectedActive
+        );
+
+        mockMvc.perform(delete("/beers/" + actualId.getValue())
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isNoContent());
+
+        Assertions.assertFalse(beerRepository.existsById(actualId.getValue()));
+    }
+
     private ResultActions listBeers(final int page, final int perPage) throws Exception {
         return listBeers(page, perPage, "", "", "");
     }
