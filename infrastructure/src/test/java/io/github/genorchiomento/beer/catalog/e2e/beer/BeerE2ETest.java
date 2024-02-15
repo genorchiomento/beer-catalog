@@ -6,6 +6,7 @@ import io.github.genorchiomento.beer.catalog.domain.beer.enumerable.ColorEnum;
 import io.github.genorchiomento.beer.catalog.domain.beer.enumerable.StyleEnum;
 import io.github.genorchiomento.beer.catalog.infrastructure.beer.model.BeerResponse;
 import io.github.genorchiomento.beer.catalog.infrastructure.beer.model.CreateBeerRequest;
+import io.github.genorchiomento.beer.catalog.infrastructure.beer.model.UpdateBeerRequest;
 import io.github.genorchiomento.beer.catalog.infrastructure.beer.persistence.BeerRepository;
 import io.github.genorchiomento.beer.catalog.infrastructure.configuration.json.Json;
 import org.junit.jupiter.api.Assertions;
@@ -16,13 +17,13 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -338,13 +339,218 @@ public class BeerE2ETest {
 
         Assertions.assertEquals(0, beerRepository.count());
 
-        final var aRequest = MockMvcRequestBuilders.get("/beers/123")
+        final var aRequest = get("/beers/123")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON);
 
         final var json = mockMvc.perform(aRequest)
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message", equalTo(expectedErrorMessage)));
+    }
+
+    @Test
+    public void asACatalogAdminIShouldBeAbleToUpdateABeerByItsIdentifier() throws Exception {
+        Assertions.assertTrue(MYSQL_CONTAINER.isRunning());
+
+        Assertions.assertEquals(0, beerRepository.count());
+
+        final var actualId = givenABeer(
+                "Skol",
+                null,
+                "Brasil",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                true
+        );
+
+        final var expectedName = "Heineken";
+        final var expectedStyle = StyleEnum.LAGER;
+        final var expectedOrigin = "Holanda";
+        final var expectedIbu = 20.0;
+        final var expectedAbv = 5.0;
+        final var expectedColor = ColorEnum.CLARA;
+        final var expectedIngredients = "Água, Malte e Lúpulo";
+        final var expectedFlavorDescription = "Suave e refrescante";
+        final var expectedAromaDescription = "Cítrico e maltado";
+        final var expectedActive = true;
+
+        final var updateRequest = new UpdateBeerRequest(
+                expectedName,
+                expectedStyle,
+                expectedOrigin,
+                expectedIbu,
+                expectedAbv,
+                expectedColor,
+                expectedIngredients,
+                expectedFlavorDescription,
+                expectedAromaDescription,
+                expectedActive
+        );
+
+        final var aRequest = put("/beers/" + actualId.getValue())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(Json.writeValueAsString(updateRequest));
+
+        mockMvc.perform(aRequest)
+                .andExpect(status().isOk());
+
+        final var actualBeer = beerRepository.findById(actualId.getValue()).get();
+
+        Assertions.assertEquals(expectedName, actualBeer.getName());
+        Assertions.assertEquals(expectedStyle, actualBeer.getStyle());
+        Assertions.assertEquals(expectedOrigin, actualBeer.getOrigin());
+        Assertions.assertEquals(expectedIbu, actualBeer.getIbu());
+        Assertions.assertEquals(expectedAbv, actualBeer.getAbv());
+        Assertions.assertEquals(expectedColor, actualBeer.getColor());
+        Assertions.assertEquals(expectedIngredients, actualBeer.getIngredients());
+        Assertions.assertEquals(expectedFlavorDescription, actualBeer.getFlavorDescription());
+        Assertions.assertEquals(expectedAromaDescription, actualBeer.getAromaDescription());
+        Assertions.assertEquals(expectedActive, actualBeer.isActive());
+        Assertions.assertNotNull(actualBeer.getCreatedAt());
+        Assertions.assertNotNull(actualBeer.getUpdatedAt());
+        Assertions.assertNull(actualBeer.getDeletedAt());
+    }
+
+    @Test
+    public void asACatalogAdminIShouldBeAbleToInactivateABeerByItsIdentifier() throws Exception {
+        Assertions.assertTrue(MYSQL_CONTAINER.isRunning());
+
+        Assertions.assertEquals(0, beerRepository.count());
+
+
+        final var expectedName = "Heineken";
+        final var expectedStyle = StyleEnum.LAGER;
+        final var expectedOrigin = "Holanda";
+        final var expectedIbu = 20.0;
+        final var expectedAbv = 5.0;
+        final var expectedColor = ColorEnum.CLARA;
+        final var expectedIngredients = "Água, Malte e Lúpulo";
+        final var expectedFlavorDescription = "Suave e refrescante";
+        final var expectedAromaDescription = "Cítrico e maltado";
+        final var expectedActive = false;
+
+        final var actualId = givenABeer(
+                expectedName,
+                expectedStyle,
+                expectedOrigin,
+                expectedIbu,
+                expectedAbv,
+                expectedColor,
+                expectedIngredients,
+                expectedFlavorDescription,
+                expectedAromaDescription,
+                true
+        );
+
+
+        final var updateRequest = new UpdateBeerRequest(
+                expectedName,
+                expectedStyle,
+                expectedOrigin,
+                expectedIbu,
+                expectedAbv,
+                expectedColor,
+                expectedIngredients,
+                expectedFlavorDescription,
+                expectedAromaDescription,
+                expectedActive
+        );
+
+        final var aRequest = put("/beers/" + actualId.getValue())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(Json.writeValueAsString(updateRequest));
+
+        mockMvc.perform(aRequest)
+                .andExpect(status().isOk());
+
+        final var actualBeer = beerRepository.findById(actualId.getValue()).get();
+
+        Assertions.assertEquals(expectedName, actualBeer.getName());
+        Assertions.assertEquals(expectedStyle, actualBeer.getStyle());
+        Assertions.assertEquals(expectedOrigin, actualBeer.getOrigin());
+        Assertions.assertEquals(expectedIbu, actualBeer.getIbu());
+        Assertions.assertEquals(expectedAbv, actualBeer.getAbv());
+        Assertions.assertEquals(expectedColor, actualBeer.getColor());
+        Assertions.assertEquals(expectedIngredients, actualBeer.getIngredients());
+        Assertions.assertEquals(expectedFlavorDescription, actualBeer.getFlavorDescription());
+        Assertions.assertEquals(expectedAromaDescription, actualBeer.getAromaDescription());
+        Assertions.assertEquals(expectedActive, actualBeer.isActive());
+        Assertions.assertNotNull(actualBeer.getCreatedAt());
+        Assertions.assertNotNull(actualBeer.getUpdatedAt());
+        Assertions.assertNotNull(actualBeer.getDeletedAt());
+    }
+
+    @Test
+    public void asACatalogAdminIShouldBeAbleToActivateABeerByItsIdentifier() throws Exception {
+        Assertions.assertTrue(MYSQL_CONTAINER.isRunning());
+
+        Assertions.assertEquals(0, beerRepository.count());
+
+
+        final var expectedName = "Heineken";
+        final var expectedStyle = StyleEnum.LAGER;
+        final var expectedOrigin = "Holanda";
+        final var expectedIbu = 20.0;
+        final var expectedAbv = 5.0;
+        final var expectedColor = ColorEnum.CLARA;
+        final var expectedIngredients = "Água, Malte e Lúpulo";
+        final var expectedFlavorDescription = "Suave e refrescante";
+        final var expectedAromaDescription = "Cítrico e maltado";
+        final var expectedActive = true;
+
+        final var actualId = givenABeer(
+                expectedName,
+                expectedStyle,
+                expectedOrigin,
+                expectedIbu,
+                expectedAbv,
+                expectedColor,
+                expectedIngredients,
+                expectedFlavorDescription,
+                expectedAromaDescription,
+                false
+        );
+
+
+        final var updateRequest = new UpdateBeerRequest(
+                expectedName,
+                expectedStyle,
+                expectedOrigin,
+                expectedIbu,
+                expectedAbv,
+                expectedColor,
+                expectedIngredients,
+                expectedFlavorDescription,
+                expectedAromaDescription,
+                expectedActive
+        );
+
+        final var aRequest = put("/beers/" + actualId.getValue())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(Json.writeValueAsString(updateRequest));
+
+        mockMvc.perform(aRequest)
+                .andExpect(status().isOk());
+
+        final var actualBeer = beerRepository.findById(actualId.getValue()).get();
+
+        Assertions.assertEquals(expectedName, actualBeer.getName());
+        Assertions.assertEquals(expectedStyle, actualBeer.getStyle());
+        Assertions.assertEquals(expectedOrigin, actualBeer.getOrigin());
+        Assertions.assertEquals(expectedIbu, actualBeer.getIbu());
+        Assertions.assertEquals(expectedAbv, actualBeer.getAbv());
+        Assertions.assertEquals(expectedColor, actualBeer.getColor());
+        Assertions.assertEquals(expectedIngredients, actualBeer.getIngredients());
+        Assertions.assertEquals(expectedFlavorDescription, actualBeer.getFlavorDescription());
+        Assertions.assertEquals(expectedAromaDescription, actualBeer.getAromaDescription());
+        Assertions.assertEquals(expectedActive, actualBeer.isActive());
+        Assertions.assertNotNull(actualBeer.getCreatedAt());
+        Assertions.assertNotNull(actualBeer.getUpdatedAt());
+        Assertions.assertNull(actualBeer.getDeletedAt());
     }
 
     private ResultActions listBeers(final int page, final int perPage) throws Exception {
@@ -363,7 +569,7 @@ public class BeerE2ETest {
             final String sort,
             final String dir
     ) throws Exception {
-        final var aRequest = MockMvcRequestBuilders.get("/beers")
+        final var aRequest = get("/beers")
                 .queryParam("page", String.valueOf(page))
                 .queryParam("perPage", String.valueOf(perPage))
                 .queryParam("search", search)
@@ -400,7 +606,7 @@ public class BeerE2ETest {
                 isActive
         );
 
-        final var aRequest = MockMvcRequestBuilders.post("/beers")
+        final var aRequest = post("/beers")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(Json.writeValueAsString(createBeerRequest));
 
@@ -415,7 +621,7 @@ public class BeerE2ETest {
 
     private BeerResponse retrieveABeer(final String id) throws Exception {
 
-        final var aRequest = MockMvcRequestBuilders.get("/beers/" + id)
+        final var aRequest = get("/beers/" + id)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON);
 
