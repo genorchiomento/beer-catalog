@@ -1,0 +1,16 @@
+logging:
+  level:
+    ROOT: info
+
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+mysql:
+  username: root
+  password: 123456
+  schema: adm_beer
+  url: localhost:${mysql.port}
